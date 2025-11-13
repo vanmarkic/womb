@@ -6,7 +6,6 @@ export default defineConfig({
 	server: {
 		port: 4340,
 	},
-	site: 'https://dragan.github.io',
-	// Uncomment and set this to your repo name if deploying to a project page
-	// base: '/womb',
+	site: 'https://vanmarkic.github.io',
+	base: '/womb',
 });
