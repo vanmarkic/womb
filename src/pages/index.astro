@@ -563,6 +563,58 @@
 	const soundEngine = new AmbientSoundEngine();
 	soundEngine.init();
 
+	// Keyboard controls to trigger sounds manually
+	window.addEventListener('keydown', (e) => {
+		// @ts-ignore - accessing private methods for keyboard control
+		const engine = soundEngine as any;
+
+		switch(e.key.toLowerCase()) {
+			case '1':
+				engine.createSwoosh();
+				break;
+			case '2':
+				engine.createSweesh();
+				break;
+			case '3':
+				engine.createWhisper();
+				break;
+			case '4':
+				engine.createShimmer();
+				break;
+			case '5':
+				engine.createRumble();
+				break;
+			case '6':
+				engine.createDrift();
+				break;
+			case '7':
+				engine.createCrack();
+				break;
+			case '8':
+				engine.createGlitch();
+				break;
+			case '9':
+				engine.createCrackle();
+				break;
+			case ' ':
+				// Spacebar: random sound
+				const sounds = [
+					() => engine.createSwoosh(),
+					() => engine.createSweesh(),
+					() => engine.createWhisper(),
+					() => engine.createShimmer(),
+					() => engine.createRumble(),
+					() => engine.createDrift(),
+					() => engine.createCrack(),
+					() => engine.createGlitch(),
+					() => engine.createCrackle(),
+				];
+				sounds[Math.floor(Math.random() * sounds.length)]();
+				e.preventDefault();
+				break;
+		}
+	});
+
 	// Cleanup on page unload
 	window.addEventListener('beforeunload', () => {
 		soundEngine.destroy();
