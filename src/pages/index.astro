@@ -102,7 +102,8 @@
 			filter.frequency.setValueAtTime(900 + Math.random() * 600, now);
 			filter.frequency.exponentialRampToValueAtTime(300 + Math.random() * 300, now + duration);
 
-			const volume = 0.02 + Math.random() * 0.015; // Random volume
+			// Base volume for low frequencies (140-240Hz range)
+			const volume = 0.025 + Math.random() * 0.018; // Slightly increased for bass
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.1 + Math.random() * 0.15);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -156,7 +157,8 @@
 			const dryGain = this.audioContext.createGain();
 			const wetGain = this.audioContext.createGain();
 
-			const volume = 0.008 + Math.random() * 0.006; // Reduced from 0.015-0.027
+			// Frequency-dependent volume: 2800-4300Hz → much quieter
+			const volume = 0.004 + Math.random() * 0.003; // Reduced ~50% for high freq
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.05 + Math.random() * 0.1);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -184,7 +186,7 @@
 			const now = this.audioContext.currentTime;
 			const duration = 1.5 + Math.random() * 2.5; // 1.5-4s
 
-			const noiseAmount = 0.02 + Math.random() * 0.04; // Reduced from 0.03-0.09
+			const noiseAmount = 0.02 + Math.random() * 0.04;
 			const bufferSize = this.audioContext.sampleRate * duration;
 			const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
 			const data = buffer.getChannelData(0);
@@ -203,7 +205,8 @@
 			const gainNode = this.audioContext.createGain();
 			const wetGain = this.audioContext.createGain();
 
-			const volume = 0.006 + Math.random() * 0.006; // Reduced from 0.01-0.02
+			// Frequency-dependent: 1600-2600Hz → quieter
+			const volume = 0.003 + Math.random() * 0.003; // Further reduced for high freq
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.2 + Math.random() * 0.3);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -232,11 +235,12 @@
 
 			oscillator.type = 'sine';
 			const startFreq = 700 + Math.random() * 400; // 700-1100Hz
-			const endFreq = startFreq * (1.5 + Math.random()); // 1.5x-2.5x higher
+			const endFreq = startFreq * (1.5 + Math.random()); // 1.5x-2.5x higher (1050-2750Hz)
 			oscillator.frequency.setValueAtTime(startFreq, now);
 			oscillator.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
 
-			const volume = 0.007 + Math.random() * 0.006; // Reduced from 0.012-0.022
+			// Frequency-dependent: 700-2750Hz → moderate reduction
+			const volume = 0.005 + Math.random() * 0.004; // Further reduced
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.08 + Math.random() * 0.15);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -319,7 +323,8 @@
 			filter.frequency.value = 400 + Math.random() * 300; // 400-700Hz
 			filter.Q.value = 1.5 + Math.random() * 2; // 1.5-3.5
 
-			const volume = 0.009 + Math.random() * 0.007; // Reduced from 0.015-0.027
+			// Frequency-dependent: 250-600Hz → mild reduction
+			const volume = 0.012 + Math.random() * 0.008; // Slight increase (low-mid freq)
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.15 + Math.random() * 0.25);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -336,15 +341,97 @@
 			oscillator.stop(now + duration);
 		}
 
+		// Generate crack sound (short sharp glitch)
+		private createCrack() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 0.03 + Math.random() * 0.07; // Very short: 30-100ms
+
+			// Sharp noise burst
+			const bufferSize = this.audioContext.sampleRate * duration;
+			const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+			const data = buffer.getChannelData(0);
+
+			for (let i = 0; i < bufferSize; i++) {
+				// Exponential decay within the burst
+				const decay = 1 - (i / bufferSize);
+				data[i] = (Math.random() * 2 - 1) * decay * 0.3;
+			}
+
+			const noiseSource = this.audioContext.createBufferSource();
+			noiseSource.buffer = buffer;
+
+			const filter = this.audioContext.createBiquadFilter();
+			filter.type = 'bandpass';
+			filter.frequency.value = 800 + Math.random() * 2000; // 800-2800Hz
+			filter.Q.value = 8 + Math.random() * 12; // Very resonant: 8-20
+
+			const gainNode = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			// Sharp attack, quick decay
+			const volume = 0.015 + Math.random() * 0.015;
+			gainNode.gain.setValueAtTime(volume, now);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			wetGain.gain.value = 0.6 + Math.random() * 0.3;
+
+			noiseSource.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(wetGain);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			noiseSource.start(now);
+		}
+
+		// Generate glitch sound (digital artifact)
+		private createGlitch() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 0.05 + Math.random() * 0.15; // 50-200ms
+
+			const oscillator = this.audioContext.createOscillator();
+			const gainNode = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			// Random waveform for digital character
+			const types: OscillatorType[] = ['square', 'sawtooth', 'triangle'];
+			oscillator.type = types[Math.floor(Math.random() * types.length)];
+
+			// Rapid frequency jump (glitchy)
+			const freq1 = 200 + Math.random() * 1500;
+			const freq2 = 200 + Math.random() * 1500;
+			oscillator.frequency.setValueAtTime(freq1, now);
+			oscillator.frequency.setValueAtTime(freq2, now + duration * 0.5);
+
+			// Sharp envelope
+			const volume = 0.01 + Math.random() * 0.012;
+			gainNode.gain.setValueAtTime(volume, now);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			wetGain.gain.value = 0.5 + Math.random() * 0.3;
+
+			oscillator.connect(gainNode);
+			gainNode.connect(wetGain);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			oscillator.start(now);
+			oscillator.stop(now + duration);
+		}
+
 		// Start ambient sound loops with randomness
 		private startAmbientSounds() {
 			const figureTimings = [
-				{ baseDuration: 25000, soundType: 0 },  // figure-1: swoosh (was 12s)
-				{ baseDuration: 30000, soundType: 1 },  // figure-2: sweesh (was 15s)
-				{ baseDuration: 35000, soundType: 2 },  // figure-3: whisper (was 18s)
-				{ baseDuration: 28000, soundType: 3 },  // figure-4: shimmer (was 14s)
-				{ baseDuration: 32000, soundType: 4 },  // figure-5: rumble (was 16s)
-				{ baseDuration: 40000, soundType: 5 },  // figure-6: drift (was 20s)
+				{ baseDuration: 25000, soundType: 0 },  // figure-1: swoosh
+				{ baseDuration: 30000, soundType: 1 },  // figure-2: sweesh
+				{ baseDuration: 35000, soundType: 2 },  // figure-3: whisper
+				{ baseDuration: 28000, soundType: 3 },  // figure-4: shimmer
+				{ baseDuration: 32000, soundType: 4 },  // figure-5: rumble
+				{ baseDuration: 40000, soundType: 5 },  // figure-6: drift
 			];
 
 			const soundFunctions = [
@@ -356,15 +443,20 @@
 				() => this.createDrift(),
 			];
 
+			const glitchFunctions = [
+				() => this.createCrack(),
+				() => this.createGlitch(),
+			];
+
 			figureTimings.forEach((timing) => {
 				// Random initial delay
-				const randomInitialDelay = Math.random() * 15000; // Increased from 8s to 15s
+				const randomInitialDelay = Math.random() * 15000;
 
 				const scheduleNextSound = () => {
 					// Play primary sound
 					soundFunctions[timing.soundType]();
 
-					// Reduced chance to layer additional sounds (10% chance, was 20%)
+					// Reduced chance to layer additional sounds (10% chance)
 					if (Math.random() < 0.1) {
 						const randomSound = Math.floor(Math.random() * soundFunctions.length);
 						setTimeout(() => {
@@ -373,7 +465,7 @@
 					}
 
 					// Schedule next sound with random variation (±40% of base duration)
-					const variation = (Math.random() - 0.5) * 0.8; // -40% to +40%
+					const variation = (Math.random() - 0.5) * 0.8;
 					const nextDelay = timing.baseDuration * (1 + variation);
 
 					const timer = setTimeout(scheduleNextSound, nextDelay);
@@ -384,6 +476,23 @@
 				const initialTimer = setTimeout(scheduleNextSound, randomInitialDelay);
 				this.soundTimers.push(initialTimer);
 			});
+
+			// Add glitch/crack sounds on separate random schedule
+			const scheduleGlitches = () => {
+				// Random glitch type
+				const glitchFunc = glitchFunctions[Math.floor(Math.random() * glitchFunctions.length)];
+				glitchFunc();
+
+				// Next glitch in 45-120 seconds
+				const nextGlitchDelay = 45000 + Math.random() * 75000;
+				const timer = setTimeout(scheduleGlitches, nextGlitchDelay);
+				this.soundTimers.push(timer);
+			};
+
+			// Start glitch chain after initial delay
+			const glitchInitialDelay = 20000 + Math.random() * 30000; // 20-50s
+			const glitchTimer = setTimeout(scheduleGlitches, glitchInitialDelay);
+			this.soundTimers.push(glitchTimer);
 		}
 
 		destroy() {
