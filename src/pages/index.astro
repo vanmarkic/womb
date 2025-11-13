@@ -615,6 +615,114 @@
 		}
 	});
 
+	// Touch/swipe controls for mobile
+	let touchStartX = 0;
+	let touchStartY = 0;
+	let touchStartTime = 0;
+	let activeTouches = new Set();
+
+	window.addEventListener('touchstart', (e) => {
+		// @ts-ignore
+		const engine = soundEngine as any;
+
+		touchStartTime = Date.now();
+
+		// Handle each touch point
+		for (let i = 0; i < e.touches.length; i++) {
+			const touch = e.touches[i];
+			const touchId = touch.identifier;
+
+			if (!activeTouches.has(touchId)) {
+				activeTouches.add(touchId);
+
+				// Store first touch position
+				if (i === 0) {
+					touchStartX = touch.clientX;
+					touchStartY = touch.clientY;
+				}
+
+				// Different sounds for different touch points
+				const soundIndex = i % 9;
+				const sounds = [
+					() => engine.createSwoosh(),
+					() => engine.createSweesh(),
+					() => engine.createWhisper(),
+					() => engine.createShimmer(),
+					() => engine.createRumble(),
+					() => engine.createDrift(),
+					() => engine.createCrack(),
+					() => engine.createGlitch(),
+					() => engine.createCrackle(),
+				];
+				sounds[soundIndex]();
+			}
+		}
+	});
+
+	window.addEventListener('touchmove', (e) => {
+		// @ts-ignore
+		const engine = soundEngine as any;
+
+		if (e.touches.length === 1) {
+			const touch = e.touches[0];
+			const deltaX = touch.clientX - touchStartX;
+			const deltaY = touch.clientY - touchStartY;
+			const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+			// Trigger sounds while swiping (every 100px)
+			if (distance > 100) {
+				// Determine direction and play corresponding sound
+				const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+				if (angle >= -45 && angle < 45) {
+					// Right swipe
+					engine.createSweesh();
+				} else if (angle >= 45 && angle < 135) {
+					// Down swipe
+					engine.createRumble();
+				} else if (angle >= -135 && angle < -45) {
+					// Up swipe
+					engine.createShimmer();
+				} else {
+					// Left swipe
+					engine.createSwoosh();
+				}
+
+				touchStartX = touch.clientX;
+				touchStartY = touch.clientY;
+			}
+		}
+	});
+
+	window.addEventListener('touchend', (e) => {
+		// @ts-ignore
+		const engine = soundEngine as any;
+
+		const touchDuration = Date.now() - touchStartTime;
+
+		// Clear ended touches
+		const currentTouchIds = new Set();
+		for (let i = 0; i < e.touches.length; i++) {
+			currentTouchIds.add(e.touches[i].identifier);
+		}
+
+		activeTouches.forEach(touchId => {
+			if (!currentTouchIds.has(touchId)) {
+				activeTouches.delete(touchId);
+			}
+		});
+
+		// Quick tap (< 200ms) triggers random glitch sound
+		if (touchDuration < 200 && e.changedTouches.length === 1) {
+			const glitchSounds = [
+				() => engine.createCrack(),
+				() => engine.createGlitch(),
+				() => engine.createCrackle(),
+			];
+			glitchSounds[Math.floor(Math.random() * glitchSounds.length)]();
+		}
+	});
+
 	// Cleanup on page unload
 	window.addEventListener('beforeunload', () => {
 		soundEngine.destroy();
