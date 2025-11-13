@@ -370,8 +370,8 @@
 			const gainNode = this.audioContext.createGain();
 			const wetGain = this.audioContext.createGain();
 
-			// Sharp attack, quick decay
-			const volume = 0.015 + Math.random() * 0.015;
+			// Sharp attack, quick decay - INCREASED VOLUME
+			const volume = 0.035 + Math.random() * 0.035; // Increased from 0.015-0.030 to 0.035-0.070
 			gainNode.gain.setValueAtTime(volume, now);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
@@ -407,8 +407,8 @@
 			oscillator.frequency.setValueAtTime(freq1, now);
 			oscillator.frequency.setValueAtTime(freq2, now + duration * 0.5);
 
-			// Sharp envelope
-			const volume = 0.01 + Math.random() * 0.012;
+			// Sharp envelope - INCREASED VOLUME
+			const volume = 0.025 + Math.random() * 0.025; // Increased from 0.01-0.022 to 0.025-0.050
 			gainNode.gain.setValueAtTime(volume, now);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
@@ -457,7 +457,8 @@
 			const dryGain = this.audioContext.createGain();
 			const wetGain = this.audioContext.createGain();
 
-			const volume = 0.008 + Math.random() * 0.007;
+			// INCREASED VOLUME
+			const volume = 0.020 + Math.random() * 0.018; // Increased from 0.008-0.015 to 0.020-0.038
 			gainNode.gain.setValueAtTime(volume, now);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
