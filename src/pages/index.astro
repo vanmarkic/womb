@@ -103,7 +103,7 @@
 			filter.frequency.exponentialRampToValueAtTime(300 + Math.random() * 300, now + duration);
 
 			// Base volume for low frequencies (140-240Hz range)
-			const volume = 0.025 + Math.random() * 0.018; // Slightly increased for bass
+			const volume = 0.030 + Math.random() * 0.022; // Slightly increased for bass
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.1 + Math.random() * 0.15);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -158,7 +158,7 @@
 			const wetGain = this.audioContext.createGain();
 
 			// Frequency-dependent volume: 2800-4300Hz → much quieter
-			const volume = 0.004 + Math.random() * 0.003; // Reduced ~50% for high freq
+			const volume = 0.005 + Math.random() * 0.004; // Reduced ~50% for high freq
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.05 + Math.random() * 0.1);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -206,7 +206,7 @@
 			const wetGain = this.audioContext.createGain();
 
 			// Frequency-dependent: 1600-2600Hz → quieter
-			const volume = 0.003 + Math.random() * 0.003; // Further reduced for high freq
+			const volume = 0.004 + Math.random() * 0.004; // Further reduced for high freq
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.2 + Math.random() * 0.3);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -240,7 +240,7 @@
 			oscillator.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
 
 			// Frequency-dependent: 700-2750Hz → moderate reduction
-			const volume = 0.005 + Math.random() * 0.004; // Further reduced
+			const volume = 0.006 + Math.random() * 0.005; // Further reduced
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.08 + Math.random() * 0.15);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -278,7 +278,7 @@
 			filter.type = 'lowpass';
 			filter.frequency.value = 120 + Math.random() * 80; // 120-200Hz
 
-			const volume = 0.018 + Math.random() * 0.015;
+			const volume = 0.022 + Math.random() * 0.018;
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.3 + Math.random() * 0.4);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -324,7 +324,7 @@
 			filter.Q.value = 1.5 + Math.random() * 2; // 1.5-3.5
 
 			// Frequency-dependent: 250-600Hz → mild reduction
-			const volume = 0.012 + Math.random() * 0.008; // Slight increase (low-mid freq)
+			const volume = 0.014 + Math.random() * 0.010; // Slight increase (low-mid freq)
 			gainNode.gain.setValueAtTime(0, now);
 			gainNode.gain.linearRampToValueAtTime(volume, now + 0.15 + Math.random() * 0.25);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -371,7 +371,7 @@
 			const wetGain = this.audioContext.createGain();
 
 			// Sharp attack, quick decay - INCREASED VOLUME
-			const volume = 0.035 + Math.random() * 0.035; // Increased from 0.015-0.030 to 0.035-0.070
+			const volume = 0.042 + Math.random() * 0.042; // Increased from 0.015-0.030 to 0.035-0.070
 			gainNode.gain.setValueAtTime(volume, now);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
@@ -408,7 +408,7 @@
 			oscillator.frequency.setValueAtTime(freq2, now + duration * 0.5);
 
 			// Sharp envelope - INCREASED VOLUME
-			const volume = 0.025 + Math.random() * 0.025; // Increased from 0.01-0.022 to 0.025-0.050
+			const volume = 0.030 + Math.random() * 0.030; // Increased from 0.01-0.022 to 0.025-0.050
 			gainNode.gain.setValueAtTime(volume, now);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
@@ -458,7 +458,7 @@
 			const wetGain = this.audioContext.createGain();
 
 			// INCREASED VOLUME
-			const volume = 0.020 + Math.random() * 0.018; // Increased from 0.008-0.015 to 0.020-0.038
+			const volume = 0.024 + Math.random() * 0.022; // Increased from 0.008-0.015 to 0.020-0.038
 			gainNode.gain.setValueAtTime(volume, now);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
@@ -578,8 +578,27 @@
 	];
 
 	window.addEventListener('keydown', (e) => {
+		// Skip if any modifier key is pressed (Ctrl, Alt, Meta/Cmd)
+		// This preserves browser shortcuts like Ctrl+T, Cmd+R, etc.
+		if (e.ctrlKey || e.altKey || e.metaKey) {
+			return;
+		}
+
 		// @ts-ignore - accessing private methods for keyboard control
 		const engine = soundEngine as any;
+
+		const key = e.key.toLowerCase();
+
+		// Ignore special keys that shouldn't trigger sounds
+		const ignoredKeys = [
+			'shift', 'control', 'alt', 'meta', 'capslock', 'tab',
+			'escape', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12',
+			'printscreen', 'scrolllock', 'pause', 'insert', 'home', 'end', 'pageup', 'pagedown',
+		];
+
+		if (ignoredKeys.includes(key)) {
+			return;
+		}
 
 		// Specific key mappings (optional, for consistent behavior)
 		const specificMappings: Record<string, () => void> = {
@@ -593,8 +612,6 @@
 			'8': () => engine.createGlitch(),
 			'9': () => engine.createCrackle(),
 		};
-
-		const key = e.key.toLowerCase();
 
 		// Check if this is a specific mapped key
 		if (specificMappings[key]) {
