@@ -564,54 +564,59 @@
 	soundEngine.init();
 
 	// Keyboard controls to trigger sounds manually
+	const keyToSoundMap = new Map();
+	const allSounds = [
+		(engine: any) => engine.createSwoosh(),
+		(engine: any) => engine.createSweesh(),
+		(engine: any) => engine.createWhisper(),
+		(engine: any) => engine.createShimmer(),
+		(engine: any) => engine.createRumble(),
+		(engine: any) => engine.createDrift(),
+		(engine: any) => engine.createCrack(),
+		(engine: any) => engine.createGlitch(),
+		(engine: any) => engine.createCrackle(),
+	];
+
 	window.addEventListener('keydown', (e) => {
 		// @ts-ignore - accessing private methods for keyboard control
 		const engine = soundEngine as any;
 
-		switch(e.key.toLowerCase()) {
-			case '1':
-				engine.createSwoosh();
-				break;
-			case '2':
-				engine.createSweesh();
-				break;
-			case '3':
-				engine.createWhisper();
-				break;
-			case '4':
-				engine.createShimmer();
-				break;
-			case '5':
-				engine.createRumble();
-				break;
-			case '6':
-				engine.createDrift();
-				break;
-			case '7':
-				engine.createCrack();
-				break;
-			case '8':
-				engine.createGlitch();
-				break;
-			case '9':
-				engine.createCrackle();
-				break;
-			case ' ':
-				// Spacebar: random sound
-				const sounds = [
-					() => engine.createSwoosh(),
-					() => engine.createSweesh(),
-					() => engine.createWhisper(),
-					() => engine.createShimmer(),
-					() => engine.createRumble(),
-					() => engine.createDrift(),
-					() => engine.createCrack(),
-					() => engine.createGlitch(),
-					() => engine.createCrackle(),
-				];
-				sounds[Math.floor(Math.random() * sounds.length)]();
-				e.preventDefault();
-				break;
+		// Specific key mappings (optional, for consistent behavior)
+		const specificMappings: Record<string, () => void> = {
+			'1': () => engine.createSwoosh(),
+			'2': () => engine.createSweesh(),
+			'3': () => engine.createWhisper(),
+			'4': () => engine.createShimmer(),
+			'5': () => engine.createRumble(),
+			'6': () => engine.createDrift(),
+			'7': () => engine.createCrack(),
+			'8': () => engine.createGlitch(),
+			'9': () => engine.createCrackle(),
+		};
+
+		const key = e.key.toLowerCase();
+
+		// Check if this is a specific mapped key
+		if (specificMappings[key]) {
+			specificMappings[key]();
+		} else {
+			// Any other key: assign a consistent sound to this key
+			if (!keyToSoundMap.has(key)) {
+				// Assign sound based on key code for consistency
+				const soundIndex = key.charCodeAt(0) % allSounds.length;
+				keyToSoundMap.set(key, allSounds[soundIndex]);
+			}
+
+			// Play the assigned sound
+			const soundFunc = keyToSoundMap.get(key);
+			if (soundFunc) {
+				soundFunc(engine);
+			}
+		}
+
+		// Prevent default for space to avoid page scroll
+		if (key === ' ') {
+			e.preventDefault();
 		}
 	});
 
