@@ -82,9 +82,12 @@
 			if (!this.audioContext || !this.reverb) return;
 
 			const now = this.audioContext.currentTime;
-			const duration = 1.8 + Math.random() * 1.2; // 1.8-3s duration
+			const duration = 1.2 + Math.random() * 2.5; // Wider range: 1.2-3.7s
 
-			// Oscillator for the swoosh
+			// Random frequency range
+			const startFreq = 140 + Math.random() * 100; // 140-240Hz
+			const endFreq = 60 + Math.random() * 80; // 60-140Hz
+
 			const oscillator = this.audioContext.createOscillator();
 			const gainNode = this.audioContext.createGain();
 			const filter = this.audioContext.createBiquadFilter();
@@ -92,20 +95,22 @@
 			const wetGain = this.audioContext.createGain();
 
 			oscillator.type = 'sine';
-			oscillator.frequency.setValueAtTime(180, now); // Higher starting frequency
-			oscillator.frequency.exponentialRampToValueAtTime(90, now + duration); // Higher ending frequency
+			oscillator.frequency.setValueAtTime(startFreq, now);
+			oscillator.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
 
 			filter.type = 'lowpass';
-			filter.frequency.setValueAtTime(1200, now);
-			filter.frequency.exponentialRampToValueAtTime(400, now + duration);
+			filter.frequency.setValueAtTime(900 + Math.random() * 600, now);
+			filter.frequency.exponentialRampToValueAtTime(300 + Math.random() * 300, now + duration);
 
+			const volume = 0.02 + Math.random() * 0.015; // Random volume
 			gainNode.gain.setValueAtTime(0, now);
-			gainNode.gain.linearRampToValueAtTime(0.03, now + 0.15);
+			gainNode.gain.linearRampToValueAtTime(volume, now + 0.1 + Math.random() * 0.15);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-			// Reverb mix
-			dryGain.gain.value = 0.3;
-			wetGain.gain.value = 0.7;
+			// Random reverb mix
+			const wet = 0.5 + Math.random() * 0.4;
+			dryGain.gain.value = 1 - wet;
+			wetGain.gain.value = wet;
 
 			oscillator.connect(filter);
 			filter.connect(gainNode);
@@ -124,15 +129,16 @@
 			if (!this.audioContext || !this.reverb) return;
 
 			const now = this.audioContext.currentTime;
-			const duration = 1.2 + Math.random() * 1; // 1.2-2.2s duration
+			const duration = 0.8 + Math.random() * 2; // Wider range: 0.8-2.8s
 
-			// White noise generator
+			// Variable noise amount
+			const noiseAmount = 0.05 + Math.random() * 0.12; // 0.05-0.17
 			const bufferSize = this.audioContext.sampleRate * duration;
 			const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
 			const data = buffer.getChannelData(0);
 
 			for (let i = 0; i < bufferSize; i++) {
-				data[i] = (Math.random() * 2 - 1) * 0.1;
+				data[i] = (Math.random() * 2 - 1) * noiseAmount;
 			}
 
 			const noiseSource = this.audioContext.createBufferSource();
@@ -140,21 +146,25 @@
 
 			const filter = this.audioContext.createBiquadFilter();
 			filter.type = 'bandpass';
-			filter.frequency.setValueAtTime(3500, now);
-			filter.frequency.exponentialRampToValueAtTime(1000, now + duration);
-			filter.Q.value = 3;
+			const startFreq = 2800 + Math.random() * 1500; // 2800-4300Hz
+			const endFreq = 800 + Math.random() * 600; // 800-1400Hz
+			filter.frequency.setValueAtTime(startFreq, now);
+			filter.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+			filter.Q.value = 2 + Math.random() * 3; // Random Q: 2-5
 
 			const gainNode = this.audioContext.createGain();
 			const dryGain = this.audioContext.createGain();
 			const wetGain = this.audioContext.createGain();
 
+			const volume = 0.015 + Math.random() * 0.012;
 			gainNode.gain.setValueAtTime(0, now);
-			gainNode.gain.linearRampToValueAtTime(0.02, now + 0.08);
+			gainNode.gain.linearRampToValueAtTime(volume, now + 0.05 + Math.random() * 0.1);
 			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-			// Reverb mix
-			dryGain.gain.value = 0.4;
-			wetGain.gain.value = 0.6;
+			// Random reverb mix
+			const wet = 0.4 + Math.random() * 0.5;
+			dryGain.gain.value = 1 - wet;
+			wetGain.gain.value = wet;
 
 			noiseSource.connect(filter);
 			filter.connect(gainNode);
@@ -313,15 +323,15 @@
 			oscillator.stop(now + duration);
 		}
 
-		// Start ambient sound loops synchronized with figure animations
+		// Start ambient sound loops with randomness
 		private startAmbientSounds() {
 			const figureTimings = [
-				{ delay: 0, duration: 12000, soundType: 0 },      // figure-1: swoosh
-				{ delay: 2000, duration: 15000, soundType: 1 },   // figure-2: sweesh
-				{ delay: 4000, duration: 18000, soundType: 2 },   // figure-3: whisper
-				{ delay: 6000, duration: 14000, soundType: 3 },   // figure-4: shimmer
-				{ delay: 8000, duration: 16000, soundType: 4 },   // figure-5: rumble
-				{ delay: 10000, duration: 20000, soundType: 5 },  // figure-6: drift
+				{ baseDuration: 12000, soundType: 0 },  // figure-1: swoosh
+				{ baseDuration: 15000, soundType: 1 },  // figure-2: sweesh
+				{ baseDuration: 18000, soundType: 2 },  // figure-3: whisper
+				{ baseDuration: 14000, soundType: 3 },  // figure-4: shimmer
+				{ baseDuration: 16000, soundType: 4 },  // figure-5: rumble
+				{ baseDuration: 20000, soundType: 5 },  // figure-6: drift
 			];
 
 			const soundFunctions = [
@@ -334,19 +344,31 @@
 			];
 
 			figureTimings.forEach((timing, index) => {
-				// Initial delay before first sound
-				const initialTimer = setTimeout(() => {
-					// Play initial sound for this figure
+				// Random initial delay
+				const randomInitialDelay = Math.random() * 8000;
+
+				const scheduleNextSound = () => {
+					// Play primary sound
 					soundFunctions[timing.soundType]();
 
-					// Set up repeating sounds
-					const repeatTimer = setInterval(() => {
-						soundFunctions[timing.soundType]();
-					}, timing.duration);
+					// Random chance to layer additional sounds (20% chance)
+					if (Math.random() < 0.2) {
+						const randomSound = Math.floor(Math.random() * soundFunctions.length);
+						setTimeout(() => {
+							soundFunctions[randomSound]();
+						}, 200 + Math.random() * 1500);
+					}
 
-					this.soundTimers.push(repeatTimer);
-				}, timing.delay);
+					// Schedule next sound with random variation (±40% of base duration)
+					const variation = (Math.random() - 0.5) * 0.8; // -40% to +40%
+					const nextDelay = timing.baseDuration * (1 + variation);
 
+					const timer = setTimeout(scheduleNextSound, nextDelay);
+					this.soundTimers.push(timer);
+				};
+
+				// Start the chain
+				const initialTimer = setTimeout(scheduleNextSound, randomInitialDelay);
 				this.soundTimers.push(initialTimer);
 			});
 		}
