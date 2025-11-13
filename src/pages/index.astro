@@ -423,6 +423,59 @@
 			oscillator.stop(now + duration);
 		}
 
+		// Generate crackle sound (vinyl-like or fire crackle)
+		private createCrackle() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 0.15 + Math.random() * 0.35; // 150-500ms
+
+			// Create short bursts of noise with random gaps
+			const bufferSize = this.audioContext.sampleRate * duration;
+			const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+			const data = buffer.getChannelData(0);
+
+			// Fill with crackling pattern
+			for (let i = 0; i < bufferSize; i++) {
+				// Random bursts with gaps (crackle effect)
+				if (Math.random() > 0.7) { // 30% chance of sound per sample
+					const decay = 1 - (i / bufferSize);
+					data[i] = (Math.random() * 2 - 1) * decay * 0.4;
+				} else {
+					data[i] = 0;
+				}
+			}
+
+			const noiseSource = this.audioContext.createBufferSource();
+			noiseSource.buffer = buffer;
+
+			const filter = this.audioContext.createBiquadFilter();
+			filter.type = 'highpass';
+			filter.frequency.value = 1500 + Math.random() * 2000; // 1500-3500Hz
+
+			const gainNode = this.audioContext.createGain();
+			const dryGain = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			const volume = 0.008 + Math.random() * 0.007;
+			gainNode.gain.setValueAtTime(volume, now);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			// Less reverb for more intimate crackle
+			dryGain.gain.value = 0.7;
+			wetGain.gain.value = 0.3;
+
+			noiseSource.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(dryGain);
+			gainNode.connect(wetGain);
+			dryGain.connect(this.audioContext.destination);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			noiseSource.start(now);
+		}
+
 		// Start ambient sound loops with randomness
 		private startAmbientSounds() {
 			const figureTimings = [
@@ -446,6 +499,7 @@
 			const glitchFunctions = [
 				() => this.createCrack(),
 				() => this.createGlitch(),
+				() => this.createCrackle(),
 			];
 
 			figureTimings.forEach((timing) => {
