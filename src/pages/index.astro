@@ -642,10 +642,17 @@
 	let touchStartY = 0;
 	let touchStartTime = 0;
 	let activeTouches = new Set();
+	let lastSoundTime = 0;
+	let isAudioInitialized = false;
 
 	window.addEventListener('touchstart', (e) => {
 		// @ts-ignore
 		const engine = soundEngine as any;
+
+		// Initialize audio on first touch (browser autoplay policy)
+		if (!isAudioInitialized && engine.audioContext) {
+			isAudioInitialized = true;
+		}
 
 		touchStartTime = Date.now();
 
@@ -663,20 +670,8 @@
 					touchStartY = touch.clientY;
 				}
 
-				// Different sounds for different touch points
-				const soundIndex = i % 9;
-				const sounds = [
-					() => engine.createSwoosh(),
-					() => engine.createSweesh(),
-					() => engine.createWhisper(),
-					() => engine.createShimmer(),
-					() => engine.createRumble(),
-					() => engine.createDrift(),
-					() => engine.createCrack(),
-					() => engine.createGlitch(),
-					() => engine.createCrackle(),
-				];
-				sounds[soundIndex]();
+				// Don't play sound on initial touch - wait for swipe
+				// This allows swiping to be the primary interaction
 			}
 		}
 	});
@@ -685,36 +680,50 @@
 		// @ts-ignore
 		const engine = soundEngine as any;
 
+		// Prevent page scrolling while swiping for sound
+		e.preventDefault();
+
 		if (e.touches.length === 1) {
 			const touch = e.touches[0];
 			const deltaX = touch.clientX - touchStartX;
 			const deltaY = touch.clientY - touchStartY;
 			const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-			// Trigger sounds while swiping (every 100px)
-			if (distance > 100) {
+			// Trigger sounds while swiping - reduced threshold to 50px for more responsive feedback
+			// Also add timing throttle to prevent too many sounds at once
+			const now = Date.now();
+			if (distance > 50 && now - lastSoundTime > 300) {
 				// Determine direction and play corresponding sound
 				const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
 				if (angle >= -45 && angle < 45) {
-					// Right swipe
+					// Right swipe - sweesh (high frequency)
 					engine.createSweesh();
 				} else if (angle >= 45 && angle < 135) {
-					// Down swipe
+					// Down swipe - rumble (low frequency)
 					engine.createRumble();
 				} else if (angle >= -135 && angle < -45) {
-					// Up swipe
+					// Up swipe - shimmer (bell-like)
 					engine.createShimmer();
 				} else {
-					// Left swipe
+					// Left swipe - swoosh (mid-low sweep)
 					engine.createSwoosh();
 				}
 
+				lastSoundTime = now;
 				touchStartX = touch.clientX;
 				touchStartY = touch.clientY;
 			}
+		} else if (e.touches.length > 1) {
+			// Multi-finger swipe - play layered sounds
+			const now = Date.now();
+			if (now - lastSoundTime > 400) {
+				engine.createDrift();
+				setTimeout(() => engine.createWhisper(), 100);
+				lastSoundTime = now;
+			}
 		}
-	});
+	}, { passive: false });
 
 	window.addEventListener('touchend', (e) => {
 		// @ts-ignore
