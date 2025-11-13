@@ -1,0 +1,639 @@
+---
+
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>womb | ambient events & curation</title>
+	</head>
+	<body>
+		<div class="darkness" id="darkness">
+			<!-- Blurred figures emerging from darkness -->
+			<div class="figure figure-1" data-figure="1"></div>
+			<div class="figure figure-2" data-figure="2"></div>
+			<div class="figure figure-3" data-figure="3"></div>
+			<div class="figure figure-4" data-figure="4"></div>
+			<div class="figure figure-5" data-figure="5"></div>
+			<div class="figure figure-6" data-figure="6"></div>
+
+			<!-- Content overlay -->
+			<div class="content">
+				<h1>womb</h1>
+				<p class="tagline">ambient events & artist curation</p>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script>
+	// Ambient sound engine using Web Audio API
+	class AmbientSoundEngine {
+		private audioContext: AudioContext | null = null;
+		private isInitialized = false;
+		private soundTimers: NodeJS.Timeout[] = [];
+		private reverb: ConvolverNode | null = null;
+
+		init() {
+			if (this.isInitialized) return;
+
+			// Initialize on first user interaction (browser autoplay policy)
+			const initAudio = () => {
+				this.audioContext = new AudioContext();
+				this.createCathedralReverb();
+				this.isInitialized = true;
+				this.startAmbientSounds();
+				document.removeEventListener('click', initAudio);
+				document.removeEventListener('touchstart', initAudio);
+			};
+
+			document.addEventListener('click', initAudio, { once: true });
+			document.addEventListener('touchstart', initAudio, { once: true });
+		}
+
+		// Create cathedral reverb impulse response
+		private createCathedralReverb() {
+			if (!this.audioContext) return;
+
+			const sampleRate = this.audioContext.sampleRate;
+			const length = sampleRate * 4; // 4 second reverb tail
+			const impulse = this.audioContext.createBuffer(2, length, sampleRate);
+			const leftChannel = impulse.getChannelData(0);
+			const rightChannel = impulse.getChannelData(1);
+
+			// Generate cathedral-like reverb with exponential decay
+			for (let i = 0; i < length; i++) {
+				const decay = Math.exp(-i / (sampleRate * 1.5));
+				const noise = (Math.random() * 2 - 1) * decay;
+
+				leftChannel[i] = noise * (1 + Math.sin(i / 500));
+				rightChannel[i] = noise * (1 + Math.cos(i / 500));
+			}
+
+			this.reverb = this.audioContext.createConvolver();
+			this.reverb.buffer = impulse;
+		}
+
+		// Generate swoosh sound (mid-low frequency sweep)
+		private createSwoosh() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 1.8 + Math.random() * 1.2; // 1.8-3s duration
+
+			// Oscillator for the swoosh
+			const oscillator = this.audioContext.createOscillator();
+			const gainNode = this.audioContext.createGain();
+			const filter = this.audioContext.createBiquadFilter();
+			const dryGain = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime(180, now); // Higher starting frequency
+			oscillator.frequency.exponentialRampToValueAtTime(90, now + duration); // Higher ending frequency
+
+			filter.type = 'lowpass';
+			filter.frequency.setValueAtTime(1200, now);
+			filter.frequency.exponentialRampToValueAtTime(400, now + duration);
+
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(0.03, now + 0.15);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			// Reverb mix
+			dryGain.gain.value = 0.3;
+			wetGain.gain.value = 0.7;
+
+			oscillator.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(dryGain);
+			gainNode.connect(wetGain);
+			dryGain.connect(this.audioContext.destination);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			oscillator.start(now);
+			oscillator.stop(now + duration);
+		}
+
+		// Generate sweesh sound (higher frequency with noise)
+		private createSweesh() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 1.2 + Math.random() * 1; // 1.2-2.2s duration
+
+			// White noise generator
+			const bufferSize = this.audioContext.sampleRate * duration;
+			const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+			const data = buffer.getChannelData(0);
+
+			for (let i = 0; i < bufferSize; i++) {
+				data[i] = (Math.random() * 2 - 1) * 0.1;
+			}
+
+			const noiseSource = this.audioContext.createBufferSource();
+			noiseSource.buffer = buffer;
+
+			const filter = this.audioContext.createBiquadFilter();
+			filter.type = 'bandpass';
+			filter.frequency.setValueAtTime(3500, now);
+			filter.frequency.exponentialRampToValueAtTime(1000, now + duration);
+			filter.Q.value = 3;
+
+			const gainNode = this.audioContext.createGain();
+			const dryGain = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(0.02, now + 0.08);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			// Reverb mix
+			dryGain.gain.value = 0.4;
+			wetGain.gain.value = 0.6;
+
+			noiseSource.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(dryGain);
+			gainNode.connect(wetGain);
+			dryGain.connect(this.audioContext.destination);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			noiseSource.start(now);
+		}
+
+		// Generate whisper sound (subtle breath-like noise)
+		private createWhisper() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 2 + Math.random() * 1.5;
+
+			const bufferSize = this.audioContext.sampleRate * duration;
+			const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+			const data = buffer.getChannelData(0);
+
+			for (let i = 0; i < bufferSize; i++) {
+				data[i] = (Math.random() * 2 - 1) * 0.05;
+			}
+
+			const noiseSource = this.audioContext.createBufferSource();
+			noiseSource.buffer = buffer;
+
+			const filter = this.audioContext.createBiquadFilter();
+			filter.type = 'highpass';
+			filter.frequency.setValueAtTime(2000, now);
+
+			const gainNode = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(0.015, now + 0.3);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			wetGain.gain.value = 0.8;
+
+			noiseSource.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(wetGain);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			noiseSource.start(now);
+		}
+
+		// Generate shimmer sound (high frequency bell-like tone)
+		private createShimmer() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 2.5 + Math.random() * 1;
+
+			const oscillator = this.audioContext.createOscillator();
+			const gainNode = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime(800, now);
+			oscillator.frequency.exponentialRampToValueAtTime(1600, now + duration);
+
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(0.018, now + 0.1);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			wetGain.gain.value = 0.85;
+
+			oscillator.connect(gainNode);
+			gainNode.connect(wetGain);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			oscillator.start(now);
+			oscillator.stop(now + duration);
+		}
+
+		// Generate rumble sound (very low frequency)
+		private createRumble() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 3 + Math.random() * 1.5;
+
+			const oscillator = this.audioContext.createOscillator();
+			const gainNode = this.audioContext.createGain();
+			const filter = this.audioContext.createBiquadFilter();
+			const dryGain = this.audioContext.createGain();
+			const wetGain = this.audioContext.createGain();
+
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime(60, now);
+			oscillator.frequency.exponentialRampToValueAtTime(35, now + duration);
+
+			filter.type = 'lowpass';
+			filter.frequency.value = 150;
+
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(0.025, now + 0.4);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			dryGain.gain.value = 0.5;
+			wetGain.gain.value = 0.5;
+
+			oscillator.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(dryGain);
+			gainNode.connect(wetGain);
+			dryGain.connect(this.audioContext.destination);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			oscillator.start(now);
+			oscillator.stop(now + duration);
+		}
+
+		// Generate drift sound (sweeping mid-range)
+		private createDrift() {
+			if (!this.audioContext || !this.reverb) return;
+
+			const now = this.audioContext.currentTime;
+			const duration = 2.2 + Math.random() * 1.3;
+
+			const oscillator = this.audioContext.createOscillator();
+			const gainNode = this.audioContext.createGain();
+			const filter = this.audioContext.createBiquadFilter();
+			const wetGain = this.audioContext.createGain();
+
+			oscillator.type = 'triangle';
+			oscillator.frequency.setValueAtTime(300, now);
+			oscillator.frequency.linearRampToValueAtTime(450, now + duration / 2);
+			oscillator.frequency.linearRampToValueAtTime(250, now + duration);
+
+			filter.type = 'bandpass';
+			filter.frequency.value = 500;
+			filter.Q.value = 2;
+
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(0.02, now + 0.2);
+			gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+			wetGain.gain.value = 0.75;
+
+			oscillator.connect(filter);
+			filter.connect(gainNode);
+			gainNode.connect(wetGain);
+			wetGain.connect(this.reverb);
+			this.reverb.connect(this.audioContext.destination);
+
+			oscillator.start(now);
+			oscillator.stop(now + duration);
+		}
+
+		// Start ambient sound loops synchronized with figure animations
+		private startAmbientSounds() {
+			const figureTimings = [
+				{ delay: 0, duration: 12000, soundType: 0 },      // figure-1: swoosh
+				{ delay: 2000, duration: 15000, soundType: 1 },   // figure-2: sweesh
+				{ delay: 4000, duration: 18000, soundType: 2 },   // figure-3: whisper
+				{ delay: 6000, duration: 14000, soundType: 3 },   // figure-4: shimmer
+				{ delay: 8000, duration: 16000, soundType: 4 },   // figure-5: rumble
+				{ delay: 10000, duration: 20000, soundType: 5 },  // figure-6: drift
+			];
+
+			const soundFunctions = [
+				() => this.createSwoosh(),
+				() => this.createSweesh(),
+				() => this.createWhisper(),
+				() => this.createShimmer(),
+				() => this.createRumble(),
+				() => this.createDrift(),
+			];
+
+			figureTimings.forEach((timing, index) => {
+				// Initial delay before first sound
+				const initialTimer = setTimeout(() => {
+					// Play initial sound for this figure
+					soundFunctions[timing.soundType]();
+
+					// Set up repeating sounds
+					const repeatTimer = setInterval(() => {
+						soundFunctions[timing.soundType]();
+					}, timing.duration);
+
+					this.soundTimers.push(repeatTimer);
+				}, timing.delay);
+
+				this.soundTimers.push(initialTimer);
+			});
+		}
+
+		destroy() {
+			this.soundTimers.forEach(timer => clearTimeout(timer));
+			this.soundTimers = [];
+			if (this.audioContext) {
+				this.audioContext.close();
+			}
+		}
+	}
+
+	// Initialize sound engine
+	const soundEngine = new AmbientSoundEngine();
+	soundEngine.init();
+
+	// Cleanup on page unload
+	window.addEventListener('beforeunload', () => {
+		soundEngine.destroy();
+	});
+</script>
+
+<style>
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	html, body {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	body {
+		background: #0a0a0a;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+		color: #e0e0e0;
+	}
+
+	.darkness {
+		position: relative;
+		width: 100%;
+		height: 100vh;
+		background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 70%);
+		overflow: hidden;
+	}
+
+	/* Blurred figures - like strangers in a dark forest */
+	.figure {
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(60px);
+		opacity: 0;
+		background: rgba(80, 80, 90, 0.5);
+		animation-timing-function: ease-in-out;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
+	}
+
+	.figure-1 {
+		width: 400px;
+		height: 600px;
+		top: 10%;
+		left: 5%;
+		background: rgba(70, 70, 85, 0.6);
+		animation: emerge1 12s infinite;
+	}
+
+	.figure-2 {
+		width: 350px;
+		height: 550px;
+		top: 40%;
+		right: 10%;
+		background: rgba(75, 75, 90, 0.5);
+		animation: emerge2 15s infinite;
+		animation-delay: -7.5s;
+	}
+
+	.figure-3 {
+		width: 300px;
+		height: 500px;
+		bottom: 15%;
+		left: 20%;
+		background: rgba(65, 65, 80, 0.65);
+		animation: emerge3 18s infinite;
+		animation-delay: -9s;
+	}
+
+	.figure-4 {
+		width: 450px;
+		height: 650px;
+		top: 25%;
+		left: 45%;
+		background: rgba(68, 68, 83, 0.55);
+		animation: emerge4 14s infinite;
+		animation-delay: -3.5s;
+	}
+
+	.figure-5 {
+		width: 380px;
+		height: 580px;
+		bottom: 20%;
+		right: 15%;
+		background: rgba(72, 72, 87, 0.6);
+		animation: emerge5 16s infinite;
+		animation-delay: -12s;
+	}
+
+	.figure-6 {
+		width: 320px;
+		height: 520px;
+		top: 60%;
+		left: 35%;
+		background: rgba(67, 67, 82, 0.58);
+		animation: emerge6 20s infinite;
+		animation-delay: -5s;
+	}
+
+	/* Staggered emergence animations with dark pastel color transitions */
+	@keyframes emerge1 {
+		0% {
+			opacity: 0;
+			transform: translate(0, 0) scale(0.9);
+			background: rgba(60, 60, 65, 0.4);
+		}
+		50% {
+			opacity: 0.6;
+			transform: translate(-20px, 30px) scale(1.1);
+			background: rgba(120, 95, 135, 0.7); /* brighter pastel purple */
+		}
+		100% {
+			opacity: 0;
+			transform: translate(-40px, 60px) scale(0.95);
+			background: rgba(60, 60, 65, 0.4);
+		}
+	}
+
+	@keyframes emerge2 {
+		0% {
+			opacity: 0;
+			transform: translate(0, 0) scale(1);
+			background: rgba(60, 60, 65, 0.4);
+		}
+		50% {
+			opacity: 0.55;
+			transform: translate(30px, -25px) scale(1.05);
+			background: rgba(95, 115, 140, 0.65); /* brighter pastel blue */
+		}
+		100% {
+			opacity: 0;
+			transform: translate(60px, -50px) scale(0.9);
+			background: rgba(60, 60, 65, 0.4);
+		}
+	}
+
+	@keyframes emerge3 {
+		0% {
+			opacity: 0;
+			transform: translate(0, 0) scale(0.95);
+			background: rgba(60, 60, 65, 0.4);
+		}
+		50% {
+			opacity: 0.58;
+			transform: translate(25px, 20px) scale(1.08);
+			background: rgba(110, 125, 100, 0.68); /* brighter pastel green */
+		}
+		100% {
+			opacity: 0;
+			transform: translate(50px, 40px) scale(1);
+			background: rgba(60, 60, 65, 0.4);
+		}
+	}
+
+	@keyframes emerge4 {
+		0% {
+			opacity: 0;
+			transform: translate(0, 0) scale(1.05);
+			background: rgba(60, 60, 65, 0.4);
+		}
+		50% {
+			opacity: 0.52;
+			transform: translate(-35px, -20px) scale(0.95);
+			background: rgba(130, 100, 115, 0.62); /* brighter pastel rose */
+		}
+		100% {
+			opacity: 0;
+			transform: translate(-70px, -40px) scale(1.1);
+			background: rgba(60, 60, 65, 0.4);
+		}
+	}
+
+	@keyframes emerge5 {
+		0% {
+			opacity: 0;
+			transform: translate(0, 0) scale(0.92);
+			background: rgba(60, 60, 65, 0.4);
+		}
+		50% {
+			opacity: 0.56;
+			transform: translate(-25px, 35px) scale(1.06);
+			background: rgba(125, 110, 95, 0.66); /* brighter pastel amber */
+		}
+		100% {
+			opacity: 0;
+			transform: translate(-50px, 70px) scale(0.98);
+			background: rgba(60, 60, 65, 0.4);
+		}
+	}
+
+	@keyframes emerge6 {
+		0% {
+			opacity: 0;
+			transform: translate(0, 0) scale(1.02);
+			background: rgba(60, 60, 65, 0.4);
+		}
+		50% {
+			opacity: 0.54;
+			transform: translate(40px, -30px) scale(0.93);
+			background: rgba(105, 120, 125, 0.64); /* brighter pastel teal */
+		}
+		100% {
+			opacity: 0;
+			transform: translate(80px, -60px) scale(1.04);
+			background: rgba(60, 60, 65, 0.4);
+		}
+	}
+
+	/* Content styling */
+	.content {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		z-index: 10;
+		text-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+	}
+
+	h1 {
+		font-size: 6rem;
+		font-weight: 200;
+		letter-spacing: 0.3em;
+		color: #d0d0d0;
+		margin-bottom: 1rem;
+		text-transform: lowercase;
+		opacity: 0;
+		animation: fadeInContent 3s ease-in forwards;
+	}
+
+	.tagline {
+		font-size: 1rem;
+		letter-spacing: 0.2em;
+		color: #808080;
+		font-weight: 300;
+		text-transform: lowercase;
+		opacity: 0;
+		animation: fadeInContent 3s ease-in 1s forwards;
+	}
+
+	@keyframes fadeInContent {
+		to {
+			opacity: 1;
+		}
+	}
+
+	/* Responsive adjustments */
+	@media (max-width: 768px) {
+		h1 {
+			font-size: 3rem;
+			letter-spacing: 0.2em;
+		}
+
+		.tagline {
+			font-size: 0.8rem;
+		}
+
+		.figure {
+			filter: blur(60px);
+		}
+
+		.figure-1, .figure-2, .figure-3,
+		.figure-4, .figure-5, .figure-6 {
+			width: 250px;
+			height: 400px;
+		}
+	}
+</style>
