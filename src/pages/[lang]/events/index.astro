@@ -35,8 +35,8 @@ const t = translations[lang];
 						<Image
 							src={event.data.coverImage}
 							alt={event.data.title[lang]}
-							width={600}
-							height={400}
+							width={420}
+							height={280}
 							format="webp"
 							quality={80}
 							loading="lazy"
@@ -86,8 +86,8 @@ const t = translations[lang];
 
 	.events-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-		gap: 2rem;
+		grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
+		gap: 1.4rem;
 	}
 
 	.event-card {
@@ -111,19 +111,19 @@ const t = translations[lang];
 	}
 
 	.event-card-content {
-		padding: 1.5rem;
+		padding: 1.05rem;
 	}
 
 	.event-card h2 {
-		font-size: 1.5rem;
+		font-size: 1.05rem;
 		font-weight: 300;
-		margin: 0 0 0.75rem 0;
+		margin: 0 0 0.525rem 0;
 		letter-spacing: 0.1em;
 	}
 
 	.event-card-meta {
 		color: rgba(255, 255, 255, 0.5);
-		font-size: 0.9rem;
+		font-size: 0.63rem;
 		letter-spacing: 0.05em;
 	}
 
