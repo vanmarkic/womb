@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import AudioPlayer from '../../../components/AudioPlayer';
 import { translations, type Language } from '../../../i18n';
 
 export async function getStaticPaths() {
@@ -94,6 +95,16 @@ const sortedArtists = [...residents, ...guests];
 				</div>
 			</section>
 		)}
+
+		<!-- Test Audio Player -->
+		<section class="event-section">
+			<h2>Test Recording</h2>
+			<AudioPlayer
+				client:load
+				audioUrl="/womb/WOMB/MUSIC/Episode Deux/Womb Ep2 - Dragan Markovic Live - edited.wav"
+				title="Dragan Markovic - Live Set"
+			/>
+		</section>
 	</main>
 </BaseLayout>
 
