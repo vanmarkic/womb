@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import { t } from '../../i18n';
+import NewsletterForm from '../../components/NewsletterForm';
 
 export async function getStaticPaths() {
   const languages = ['en', 'fr'] as const;
@@ -34,6 +35,10 @@ const content = {
         description: 'For general questions and information'
       }
     },
+    newsletter: {
+      title: 'Subscribe to Newsletter',
+      description: 'Stay updated with our latest events, recordings, and artist features.'
+    },
     social: {
       title: 'Follow Us',
       instagram: 'Instagram',
@@ -59,6 +64,10 @@ const content = {
         email: 'info@womb-ambient.com',
         description: 'Pour les questions et informations générales'
       }
+    },
+    newsletter: {
+      title: 'S\'abonner à la Newsletter',
+      description: 'Restez informé de nos derniers événements, enregistrements et présentations d\'artistes.'
     },
     social: {
       title: 'Suivez-nous',
@@ -103,6 +112,12 @@ const currentContent = content[lang];
           {currentContent.sections.general.email}
         </a>
       </section>
+    </div>
+
+    <div class="newsletter-section">
+      <h2>{currentContent.newsletter.title}</h2>
+      <p class="description">{currentContent.newsletter.description}</p>
+      <NewsletterForm client:load lang={lang} />
     </div>
 
     <div class="social-section">
@@ -192,6 +207,116 @@ const currentContent = content[lang];
     transform: translateY(-1px);
   }
 
+  .newsletter-section {
+    text-align: center;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .newsletter-section h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    color: #d0d0d0;
+  }
+
+  .newsletter-section .description {
+    color: #808080;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .newsletter-form {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .newsletter-input-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-weight: 300;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .newsletter-input::placeholder {
+    color: #808080;
+  }
+
+  .newsletter-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .newsletter-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .newsletter-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 0.75rem 2rem;
+    color: #d0d0d0;
+    font-size: 1rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  .newsletter-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .newsletter-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .newsletter-message {
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .newsletter-message.success {
+    color: #a0d0a0;
+    background: rgba(160, 208, 160, 0.1);
+    border: 1px solid rgba(160, 208, 160, 0.2);
+  }
+
+  .newsletter-message.error {
+    color: #d0a0a0;
+    background: rgba(208, 160, 160, 0.1);
+    border: 1px solid rgba(208, 160, 160, 0.2);
+  }
+
   .social-section {
     text-align: center;
     padding-top: 2rem;
@@ -234,6 +359,14 @@ const currentContent = content[lang];
 
     .contact-sections {
       gap: 2rem;
+    }
+
+    .newsletter-input-group {
+      flex-direction: column;
+    }
+
+    .newsletter-button {
+      width: 100%;
     }
   }
 </style>
