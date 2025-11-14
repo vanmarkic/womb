@@ -35,7 +35,18 @@ export default function AudioPlayer({ audioUrl, title }: Props) {
 				setIsLoading(false);
 			});
 
+		// Listen for other players starting
+		const handleOtherPlayerStart = (e: CustomEvent) => {
+			if (e.detail.player !== audioRef.current && audioRef.current) {
+				audioRef.current.pause();
+				setIsPlaying(false);
+			}
+		};
+
+		window.addEventListener('recording-play-request', handleOtherPlayerStart as EventListener);
+
 		return () => {
+			window.removeEventListener('recording-play-request', handleOtherPlayerStart as EventListener);
 			if (audioRef.current?.src) {
 				URL.revokeObjectURL(audioRef.current.src);
 			}
@@ -46,8 +57,14 @@ export default function AudioPlayer({ audioUrl, title }: Props) {
 		if (audioRef.current) {
 			if (isPlaying) {
 				audioRef.current.pause();
+				// Dispatch custom event when pausing
+				window.dispatchEvent(new CustomEvent('recording-paused'));
 			} else {
+				// Pause all other audio players
+				window.dispatchEvent(new CustomEvent('recording-play-request', { detail: { player: audioRef.current } }));
 				audioRef.current.play();
+				// Dispatch custom event when playing
+				window.dispatchEvent(new CustomEvent('recording-playing'));
 			}
 			setIsPlaying(!isPlaying);
 		}
@@ -75,7 +92,11 @@ export default function AudioPlayer({ audioUrl, title }: Props) {
 				ref={audioRef}
 				onTimeUpdate={(e) => setCurrentTime((e.target as HTMLAudioElement).currentTime)}
 				onLoadedMetadata={(e) => setDuration((e.target as HTMLAudioElement).duration)}
-				onEnded={() => setIsPlaying(false)}
+				onEnded={() => {
+					setIsPlaying(false);
+					// Dispatch custom event when recording ends
+					window.dispatchEvent(new CustomEvent('recording-ended'));
+				}}
 				controlsList="nodownload"
 			/>
 

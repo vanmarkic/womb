@@ -37,6 +37,12 @@ function switchLang(toLang: Language): string {
 			{t.nav.artists}
 		</a>
 		<a
+			href={`/womb/${lang}/recordings`}
+			class:list={['nav-link', { active: isActive('/recordings') }]}
+		>
+			{t.nav.recordings}
+		</a>
+		<a
 			href={`/womb/${lang}/about`}
 			class:list={['nav-link', { active: isActive('/about') }]}
 		>

@@ -5,6 +5,13 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
 
+interface MediaItem {
+  type: 'photo' | 'video';
+  file: string;
+  author?: string;
+  caption?: string;
+}
+
 interface EventData {
   number: number;
   slug: string;
@@ -16,6 +23,7 @@ interface EventData {
   artists: string[];
   descriptionEN: string;
   descriptionFR: string;
+  media?: MediaItem[];
 }
 
 // Example events data - replace with actual data
@@ -42,12 +50,40 @@ const events: EventData[] = [
     coverImage: '/womb/WOMB/Events/Episode Deux/WombEpisode2_FB.png',
     artists: ['dragan-markovic', 'emsy', 'keyframe', 'rafa', 'rotor', 'sebcat'],
     descriptionEN: 'The second edition of WOMB brings together...',
-    descriptionFR: 'La deuxième édition de WOMB rassemble...'
+    descriptionFR: 'La deuxième édition de WOMB rassemble...',
+    media: [
+      {
+        type: 'photo',
+        file: '/womb/WOMB/Visus/Episode Deux/DSC08734.jpg',
+        author: 'SebCat',
+        caption: 'Opening set'
+      },
+      {
+        type: 'photo',
+        file: '/womb/WOMB/Visus/Episode Deux/DSC08743.jpg',
+        author: 'SebCat',
+        caption: 'Ambient atmosphere'
+      },
+      {
+        type: 'photo',
+        file: '/womb/WOMB/Visus/Episode Deux/DSC08745.jpg',
+        author: 'SebCat'
+      }
+    ]
   },
   // Add more events...
 ];
 
 function createEventMarkdown(event: EventData): string {
+  const mediaYaml = event.media && event.media.length > 0
+    ? `media:
+${event.media.map(m => `  - type: ${m.type}
+    file: "${m.file}"${m.author ? `
+    author: "${m.author}"` : ''}${m.caption ? `
+    caption: "${m.caption}"` : ''}`).join('\n')}
+`
+    : '';
+
   return `---
 number: ${event.number}
 title:
@@ -59,7 +95,7 @@ location: "${event.location}"
 coverImage: "${event.coverImage || ''}"
 artists:
 ${event.artists.map(a => `  - ${a}`).join('\n')}
----
+${mediaYaml}---
 
 ## Description (EN)
 

@@ -2,6 +2,7 @@
   "nav": {
     "events": "Events",
     "artists": "Artists",
+    "recordings": "Recordings",
     "about": "About",
     "contact": "Contact"
   },
@@ -21,6 +22,17 @@
     "events": "Events",
     "recordings": "Recordings",
     "allArtists": "All Artists"
+  },
+  "recordings": {
+    "title": "Recordings",
+    "archive": "Recording Archive",
+    "listen": "Listen",
+    "duration": "Duration",
+    "artist": "Artist",
+    "event": "Event",
+    "date": "Date",
+    "download": "Download",
+    "streamOn": "Stream on"
   },
   "common": {
     "loading": "Loading...",

@@ -26,6 +26,17 @@ const events = defineCollection({
 		location: z.string(),
 		coverImage: z.string().optional(),
 		artists: z.array(z.string()),
+		audioTracks: z.array(z.object({
+			title: z.string(),
+			artist: z.string(),
+			audioFile: z.string(),
+		})).optional(),
+		media: z.array(z.object({
+			type: z.enum(['photo', 'video']),
+			file: z.string(),
+			author: z.string().optional(),
+			caption: z.string().optional(),
+		})).optional(),
 	}),
 });
 

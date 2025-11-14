@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import AudioPlayer from '../../../components/AudioPlayer';
+import { Gallery } from '../../../components/Gallery';
 import { translations, type Language } from '../../../i18n';
 
 export async function getStaticPaths() {
@@ -18,7 +20,7 @@ export async function getStaticPaths() {
 			);
 
 			return {
-				params: { lang, slug: event.id },
+				params: { lang, slug: event.id.replace('.md', '') },
 				props: { event, eventArtists, lang }
 			};
 		})
@@ -43,7 +45,15 @@ const sortedArtists = [...residents, ...guests];
 		<header class="event-hero">
 			{event.data.coverImage && (
 				<div class="hero-image-wrapper">
-					<img src={event.data.coverImage} alt={event.data.title[lang]} />
+					<Image
+						src={event.data.coverImage}
+						alt={event.data.title[lang]}
+						width={1200}
+						height={675}
+						format="webp"
+						quality={85}
+						loading="eager"
+					/>
 				</div>
 			)}
 			<div class="event-hero-content">
@@ -82,7 +92,14 @@ const sortedArtists = [...residents, ...guests];
 					{sortedArtists.map(artist => (
 						<a href={`/womb/${lang}/artists/${artist.id}`} class="artist-card">
 							{artist.data.photo && (
-								<img src={artist.data.photo} alt={artist.data.name} />
+								<Image
+									src={artist.data.photo}
+									alt={artist.data.name}
+									width={200}
+									height={200}
+									format="webp"
+									quality={80}
+								/>
 							)}
 							<div class="artist-card-content">
 								<h3>{artist.data.name}</h3>
@@ -96,15 +113,33 @@ const sortedArtists = [...residents, ...guests];
 			</section>
 		)}
 
-		<!-- Test Audio Player -->
-		<section class="event-section">
-			<h2>Test Recording</h2>
-			<AudioPlayer
-				client:load
-				audioUrl="/womb/WOMB/MUSIC/Episode Deux/Womb Ep2 - Dragan Markovic Live - edited.wav"
-				title="Dragan Markovic - Live Set"
-			/>
-		</section>
+		<!-- Gallery -->
+		{event.data.media && event.data.media.length > 0 && (
+			<section class="event-section">
+				<h2>{t.events.gallery || 'Gallery'}</h2>
+				<Gallery
+					client:load
+					items={event.data.media}
+					lang={lang}
+				/>
+			</section>
+		)}
+
+		<!-- Audio Recordings -->
+		{event.data.audioTracks && event.data.audioTracks.length > 0 && (
+			<section class="event-section">
+				<h2>{t.events.recordings || 'Recordings'}</h2>
+				<div class="audio-tracks">
+					{event.data.audioTracks.map(track => (
+						<AudioPlayer
+							client:load
+							audioUrl={track.audioFile}
+							title={`${track.artist} - ${track.title}`}
+						/>
+					))}
+				</div>
+			</section>
+		)}
 	</main>
 </BaseLayout>
 
@@ -218,6 +253,12 @@ const sortedArtists = [...residents, ...guests];
 		color: rgba(255,255,255,0.5);
 		text-transform: lowercase;
 		letter-spacing: 0.05em;
+	}
+
+	.audio-tracks {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
 	}
 
 	@media (max-width: 768px) {

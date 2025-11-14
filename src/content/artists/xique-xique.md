@@ -1,0 +1,10 @@
+---
+name: Xique-Xique
+type: guest
+---
+
+## Bio (EN)
+Xique-Xique is known for vinyl hybrid sets that blend organic and electronic ambient soundscapes.
+
+## Bio (FR)
+Xique-Xique est reconnu pour ses sets vinyl hybrides qui mélangent des paysages sonores ambiants organiques et électroniques.

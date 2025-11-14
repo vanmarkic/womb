@@ -2,6 +2,7 @@
   "nav": {
     "events": "Événements",
     "artists": "Artistes",
+    "recordings": "Enregistrements",
     "about": "À propos",
     "contact": "Contact"
   },
@@ -21,6 +22,17 @@
     "events": "Événements",
     "recordings": "Enregistrements",
     "allArtists": "Tous les artistes"
+  },
+  "recordings": {
+    "title": "Enregistrements",
+    "archive": "Archives d'enregistrements",
+    "listen": "Écouter",
+    "duration": "Durée",
+    "artist": "Artiste",
+    "event": "Événement",
+    "date": "Date",
+    "download": "Télécharger",
+    "streamOn": "Écouter sur"
   },
   "common": {
     "loading": "Chargement...",

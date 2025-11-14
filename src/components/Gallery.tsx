@@ -1,6 +1,5 @@
 import { h } from 'preact';
-import { useState, useEffect, useRef } from 'preact/hooks';
-import * as Dialog from '@radix-ui/react-dialog';
+import { useState, useEffect } from 'preact/hooks';
 import './Gallery.css';
 
 interface MediaItem {
@@ -17,17 +16,16 @@ interface GalleryProps {
 
 export function Gallery({ items, lang }: GalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const touchStartX = useRef<number | null>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const openLightbox = (index: number) => {
     setSelectedIndex(index);
-    setIsOpen(true);
+    document.body.style.overflow = 'hidden';
   };
 
   const closeLightbox = () => {
-    setIsOpen(false);
     setSelectedIndex(null);
+    document.body.style.overflow = '';
   };
 
   const goToPrevious = () => {
@@ -42,7 +40,7 @@ export function Gallery({ items, lang }: GalleryProps) {
 
   // Keyboard navigation
   useEffect(() => {
-    if (!isOpen) return;
+    if (selectedIndex === null) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -60,18 +58,18 @@ export function Gallery({ items, lang }: GalleryProps) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex]);
+  }, [selectedIndex]);
 
   // Touch gestures
   const handleTouchStart = (e: TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+    setTouchStartX(e.touches[0].clientX);
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX === null) return;
 
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
+    const diff = touchStartX - touchEndX;
 
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
@@ -81,7 +79,7 @@ export function Gallery({ items, lang }: GalleryProps) {
       }
     }
 
-    touchStartX.current = null;
+    setTouchStartX(null);
   };
 
   const selectedItem = selectedIndex !== null ? items[selectedIndex] : null;
@@ -115,65 +113,65 @@ export function Gallery({ items, lang }: GalleryProps) {
         ))}
       </div>
 
-      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay class="dialog-overlay" onClick={closeLightbox} />
-          <Dialog.Content
-            class="dialog-content"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            {selectedItem && (
-              <>
-                <Dialog.Close class="dialog-close" aria-label="Close">
-                  ×
-                </Dialog.Close>
+      {selectedIndex !== null && selectedItem && (
+        <div
+          class="lightbox-overlay"
+          onClick={closeLightbox}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div class="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <button
+              class="lightbox-close"
+              onClick={closeLightbox}
+              aria-label="Close"
+            >
+              ×
+            </button>
 
-                <button
-                  class="dialog-nav dialog-prev"
-                  onClick={goToPrevious}
-                  aria-label="Previous"
-                >
-                  ‹
-                </button>
+            <button
+              class="lightbox-nav lightbox-prev"
+              onClick={goToPrevious}
+              aria-label="Previous"
+            >
+              ‹
+            </button>
 
-                <div class="dialog-media">
-                  {selectedItem.type === 'photo' ? (
-                    <img
-                      src={selectedItem.file}
-                      alt={selectedItem.caption || 'Gallery image'}
-                    />
-                  ) : (
-                    <video
-                      src={selectedItem.file}
-                      controls
-                      autoPlay
-                    />
-                  )}
-                  {selectedItem.caption && (
-                    <p class="dialog-caption">{selectedItem.caption}</p>
-                  )}
-                  {selectedItem.author && (
-                    <p class="dialog-author">© {selectedItem.author}</p>
-                  )}
-                </div>
+            <div class="lightbox-media">
+              {selectedItem.type === 'photo' ? (
+                <img
+                  src={selectedItem.file}
+                  alt={selectedItem.caption || 'Gallery image'}
+                />
+              ) : (
+                <video
+                  src={selectedItem.file}
+                  controls
+                  autoPlay
+                />
+              )}
+              {selectedItem.caption && (
+                <p class="lightbox-caption">{selectedItem.caption}</p>
+              )}
+              {selectedItem.author && (
+                <p class="lightbox-author">© {selectedItem.author}</p>
+              )}
+            </div>
 
-                <button
-                  class="dialog-nav dialog-next"
-                  onClick={goToNext}
-                  aria-label="Next"
-                >
-                  ›
-                </button>
+            <button
+              class="lightbox-nav lightbox-next"
+              onClick={goToNext}
+              aria-label="Next"
+            >
+              ›
+            </button>
 
-                <div class="dialog-counter">
-                  {selectedIndex + 1} / {items.length}
-                </div>
-              </>
-            )}
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+            <div class="lightbox-counter">
+              {selectedIndex + 1} / {items.length}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

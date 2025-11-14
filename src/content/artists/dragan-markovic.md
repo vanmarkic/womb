@@ -1,10 +1,17 @@
 ---
-name: Dragan Markovic
-type: resident
+name: "Dragan Markovic"
+type: "resident"
+photo: "/womb/WOMB/Artists/dragan.jpg"
+instagram: "https://instagram.com/dragan_markovic"
+soundcloud: "https://soundcloud.com/dragan-markovic"
+
+order: 1
 ---
 
 ## Bio (EN)
-Dragan Markovic is a Brussels-based ambient artist and curator, founder of WOMB.
+
+Dragan is a Brussels-based ambient artist and founder of WOMB...
 
 ## Bio (FR)
-Dragan Markovic est un artiste ambient et curateur basé à Bruxelles, fondateur de WOMB.
+
+Dragan est un artiste ambient basé à Bruxelles et fondateur de WOMB...
