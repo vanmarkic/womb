@@ -4,11 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout lang="en" title="ambient events & curation">
 	<div class="landing">
-		<!-- Content overlay -->
-		<div class="content">
+	<!-- Content overlay -->
+	<div class="content">
+		<a href="/womb/en/events" class="womb-link">
 			<h1>womb</h1>
-			<p class="tagline">ambient events & artist curation</p>
-		</div>
+		</a>
+		<p class="tagline">ambient events & artist curation</p>
+	</div>
 
 		<!-- Language selector overlay -->
 		<div class="lang-enter">
@@ -36,6 +38,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		text-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
 	}
 
+	.womb-link {
+		text-decoration: none;
+		display: inline-block;
+		transition: transform 0.3s ease;
+	}
+
+	.womb-link:hover {
+		transform: scale(1.02);
+	}
+
 	h1 {
 		font-size: 6rem;
 		font-weight: 200;
@@ -45,6 +57,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		text-transform: lowercase;
 		opacity: 0;
 		animation: fadeInContent 3s ease-in forwards;
+		transition: color 0.3s ease;
+	}
+
+	.womb-link:hover h1 {
+		color: #ffffff;
 	}
 
 	.tagline {

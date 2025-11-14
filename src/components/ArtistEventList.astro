@@ -1,0 +1,71 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Language } from '../i18n';
+
+interface Props {
+  events: CollectionEntry<'events'>[];
+  lang: Language;
+  eventsLabel: string;
+}
+
+const { events, lang, eventsLabel } = Astro.props;
+
+// Sort events by number (newest first)
+const sortedEvents = [...events].sort((a, b) => b.data.number - a.data.number);
+---
+
+{sortedEvents.length > 0 && (
+  <div class="artist-events">
+    <p class="events-label">{eventsLabel}:</p>
+    <ul>
+      {sortedEvents.map((event) => (
+        <li>
+          <a href={`/womb/${lang}/events/${event.id.replace('.md', '')}`}>
+            {event.data.title[lang]}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<style>
+  .artist-events {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .events-label {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+  }
+
+  .artist-events ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .artist-events li {
+    margin-bottom: 0.3rem;
+  }
+
+  .artist-events a {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: inline-block;
+    padding: 0.2rem 0;
+  }
+
+  .artist-events a:hover {
+    color: rgba(255, 255, 255, 1);
+    text-decoration: underline;
+  }
+</style>
+

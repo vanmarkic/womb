@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import ArtistEventList from '../../../components/ArtistEventList.astro';
 import { translations, type Language } from '../../../i18n';
 
 export async function getStaticPaths() {
@@ -79,27 +80,18 @@ const guests = artists.filter(a => a.data.type === 'guest');
                   <h3>{artist.data.name}</h3>
                 </a>
 
-                {artistEventList.length > 0 && (
-                  <div class="artist-events">
-                    <p class="events-label">{translations[lang].events.title}:</p>
-                    <ul>
-                      {artistEventList.sort((a: CollectionEntry<'events'>, b: CollectionEntry<'events'>) => b.data.number - a.data.number).map((event: CollectionEntry<'events'>) => (
-                        <li>
-                          <a href={`/womb/${lang}/events/${event.id.replace('.md', '')}`}>
-                            {event.data.title[lang]}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+    {/*             <ArtistEventList 
+                  events={artistEventList}
+                  lang={lang}
+                  eventsLabel={translations[lang].events.title}
+                /> */}
               </div>
             );
           })}
         </div>
       </section>
-    )}
-
+    )
+}
     {guests.length > 0 && (
       <section class="artists-section">
         <h2>{translations[lang].artists.guests}</h2>
@@ -124,20 +116,11 @@ const guests = artists.filter(a => a.data.type === 'guest');
                   <h3>{artist.data.name}</h3>
                 </a>
 
-                {artistEventList.length > 0 && (
-                  <div class="artist-events">
-                    <p class="events-label">{translations[lang].events.title}:</p>
-                    <ul>
-                      {artistEventList.sort((a: CollectionEntry<'events'>, b: CollectionEntry<'events'>) => b.data.number - a.data.number).map((event: CollectionEntry<'events'>) => (
-                        <li>
-                          <a href={`/womb/${lang}/events/${event.id.replace('.md', '')}`}>
-                            {event.data.title[lang]}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+              {/*   <ArtistEventList 
+                  events={artistEventList}
+                  lang={lang}
+                  eventsLabel={translations[lang].events.title}
+                /> */}
               </div>
             );
           })}
@@ -224,44 +207,6 @@ const guests = artists.filter(a => a.data.type === 'guest');
 
   .artist-card:hover .artist-image img {
     filter: brightness(1.1);
-  }
-
-  .artist-events {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .events-label {
-    font-size: 0.9rem;
-    opacity: 0.6;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.05em;
-    text-transform: lowercase;
-  }
-
-  .artist-events ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .artist-events li {
-    margin-bottom: 0.3rem;
-  }
-
-  .artist-events a {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
-    transition: color 0.2s;
-    display: inline-block;
-    padding: 0.2rem 0;
-  }
-
-  .artist-events a:hover {
-    color: rgba(255, 255, 255, 1);
-    text-decoration: underline;
   }
 
   .artist-placeholder {
