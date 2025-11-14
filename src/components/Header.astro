@@ -1,0 +1,147 @@
+---
+import { translations, type Language } from '../i18n';
+
+interface Props {
+	lang: Language;
+}
+
+const { lang } = Astro.props;
+const t = translations[lang];
+const currentPath = Astro.url.pathname;
+
+// Helper to check if path is active
+function isActive(path: string): boolean {
+	return currentPath.includes(path);
+}
+
+// Helper to switch language
+function switchLang(toLang: Language): string {
+	return currentPath.replace(`/${lang}/`, `/${toLang}/`);
+}
+---
+
+<header class="header">
+	<a href={`/${lang}/events`} class="logo">WOMB</a>
+
+	<nav class="nav">
+		<a
+			href={`/${lang}/events`}
+			class:list={['nav-link', { active: isActive('/events') }]}
+		>
+			{t.nav.events}
+		</a>
+		<a
+			href={`/${lang}/artists`}
+			class:list={['nav-link', { active: isActive('/artists') }]}
+		>
+			{t.nav.artists}
+		</a>
+		<a
+			href={`/${lang}/about`}
+			class:list={['nav-link', { active: isActive('/about') }]}
+		>
+			{t.nav.about}
+		</a>
+		<a
+			href={`/${lang}/contact`}
+			class:list={['nav-link', { active: isActive('/contact') }]}
+		>
+			{t.nav.contact}
+		</a>
+	</nav>
+
+	<div class="lang-toggle">
+		<a
+			href={switchLang('en')}
+			class:list={{ active: lang === 'en' }}
+		>
+			EN
+		</a>
+		<span class="separator">/</span>
+		<a
+			href={switchLang('fr')}
+			class:list={{ active: lang === 'fr' }}
+		>
+			FR
+		</a>
+	</div>
+</header>
+
+<style>
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1.5rem 2rem;
+		border-bottom: 1px solid rgba(255,255,255,0.08);
+		background: rgba(10, 10, 10, 0.95);
+		backdrop-filter: blur(10px);
+	}
+
+	.logo {
+		font-size: 1.5rem;
+		font-weight: 200;
+		letter-spacing: 0.3em;
+		color: #d0d0d0;
+		transition: opacity 0.3s;
+	}
+
+	.logo:hover {
+		opacity: 0.7;
+	}
+
+	.nav {
+		display: flex;
+		gap: 2rem;
+	}
+
+	.nav-link {
+		color: #808080;
+		font-size: 0.95rem;
+		letter-spacing: 0.1em;
+		transition: color 0.3s;
+		text-transform: lowercase;
+	}
+
+	.nav-link:hover,
+	.nav-link.active {
+		color: #d0d0d0;
+	}
+
+	.lang-toggle {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		font-size: 0.9rem;
+		letter-spacing: 0.1em;
+	}
+
+	.lang-toggle a {
+		color: #808080;
+		transition: color 0.3s;
+	}
+
+	.lang-toggle a:hover,
+	.lang-toggle a.active {
+		color: #d0d0d0;
+	}
+
+	.separator {
+		color: rgba(255,255,255,0.3);
+	}
+
+	@media (max-width: 768px) {
+		.header {
+			flex-direction: column;
+			gap: 1.5rem;
+			padding: 1rem;
+		}
+
+		.nav {
+			gap: 1.5rem;
+			font-size: 0.85rem;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+	}
+</style>
