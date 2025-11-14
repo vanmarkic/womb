@@ -2,7 +2,7 @@
 title: "Live Performance - Episode Trois"
 artist: "Shin"
 event: "episode-3"
-audioFile: "/womb/recordings/episode-3-shin.wav"
+audioFile: "/womb/recordings/episode-3-shin.mp3"
 duration: 6625
 date: 2024-02-17
 photo: "/womb/episode-3-atmosphere-5.jpg"

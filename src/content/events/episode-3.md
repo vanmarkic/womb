@@ -22,16 +22,16 @@ artists:
 audioTracks:
   - title: DJ Set - Episode Trois
     artist: Rafael Aragon
-    audioFile: /womb/recordings/episode-3-rafael-aragon.wav
+    audioFile: /womb/recordings/episode-3-rafael-aragon.mp3
   - title: DJ Set - Episode Trois
     artist: Sebcat
-    audioFile: /womb/recordings/episode-3-sebcat.wav
+    audioFile: /womb/recordings/episode-3-sebcat.mp3
   - title: Live Performance - Episode Trois
     artist: Shin
-    audioFile: /womb/recordings/episode-3-shin.wav
+    audioFile: /womb/recordings/episode-3-shin.mp3
   - title: Live Set - Episode Trois
     artist: Xav
-    audioFile: /womb/recordings/episode-3-xav.wav
+    audioFile: /womb/recordings/episode-3-xav.mp3
 socialMedia:
   instagram: "@womb_ambient"
   soundcloud: "Rafael_Aragon"

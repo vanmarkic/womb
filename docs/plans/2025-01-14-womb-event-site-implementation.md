@@ -1397,7 +1397,7 @@ Add after lineup section:
 	<h2>Test Recording</h2>
 	<AudioPlayer
 		client:load
-		audioUrl="/womb/WOMB/MUSIC/Episode Deux/Womb Ep2 - Dragan Markovic Live - edited.wav"
+		audioUrl="/womb/WOMB/MUSIC/Episode Deux/Womb Ep2 - Dragan Markovic Live - edited.mp3"
 		title="Dragan Markovic - Live Set"
 	/>
 </section>

@@ -23,7 +23,7 @@ artists:
 audioTracks:
   - title: Live Set - Episode Deux
     artist: Dragan Markovic
-    audioFile: /womb/recordings/episode-2-dragan-markovic-live.wav
+    audioFile: /womb/recordings/episode-2-dragan-markovic-live.mp3
 media:
   - type: photo
     file: "/womb/episode-2-atmosphere-1.jpg"

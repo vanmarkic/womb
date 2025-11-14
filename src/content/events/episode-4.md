@@ -20,10 +20,10 @@ artists:
 audioTracks:
   - title: DJ Set - Episode Quatre
     artist: Emsy Bibis
-    audioFile: /womb/recordings/episode-4-emsy-bibis.wav
+    audioFile: /womb/recordings/episode-4-emsy-bibis.mp3
   - title: Live Performance - Episode Quatre
     artist: Rotor
-    audioFile: /womb/recordings/episode-4-rotor-live.wav
+    audioFile: /womb/recordings/episode-4-rotor-live.mp3
 socialMedia:
   instagram: "@womb_ambient"
   facebook: "WOMB - Ambient Music Events"
