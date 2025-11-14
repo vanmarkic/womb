@@ -2,7 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { t } from '../../../i18n';
-import AudioPlayer from '../../../components/AudioPlayer.astro';
+import AudioPlayer from '../../../components/AudioPlayer.tsx';
 
 export async function getStaticPaths() {
   const artists = await getCollection('artists');
@@ -107,6 +107,7 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
             <div class="recording-item">
               <h3>{recording.data.title}</h3>
               <AudioPlayer
+                client:load
                 src={recording.data.audioFile}
                 title={recording.data.title}
                 artist={artist.data.name}

@@ -15,6 +15,9 @@
   "artists": {
     "resident": "Résident",
     "guest": "Invité",
+    "residents": "Résidents",
+    "guests": "Invités",
+    "bio": "Biographie",
     "events": "Événements",
     "recordings": "Enregistrements",
     "allArtists": "Tous les artistes"

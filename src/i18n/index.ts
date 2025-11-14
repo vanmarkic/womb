@@ -15,3 +15,6 @@ export function getTranslation(lang: Language, path: string): string {
 
 	return value || path;
 }
+
+// Alias for convenience
+export const t = getTranslation;
