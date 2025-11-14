@@ -1,0 +1,234 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import { translations, type Language } from '../../../i18n';
+
+export async function getStaticPaths() {
+	const events = await getCollection('events');
+	const artists = await getCollection('artists');
+	const languages: Language[] = ['en', 'fr'];
+
+	return languages.flatMap(lang =>
+		events.map(event => {
+			const eventArtists = artists.filter(a =>
+				event.data.artists.includes(a.id)
+			);
+
+			return {
+				params: { lang, slug: event.id },
+				props: { event, eventArtists, lang }
+			};
+		})
+	);
+}
+
+const { event, eventArtists, lang } = Astro.props;
+const t = translations[lang];
+const { Content } = await event.render();
+
+// Sort artists: residents first
+const residents = eventArtists.filter(a => a.data.type === 'resident');
+const guests = eventArtists.filter(a => a.data.type === 'guest');
+const sortedArtists = [...residents, ...guests];
+---
+
+<BaseLayout lang={lang} title={event.data.title[lang]}>
+	<Header lang={lang} />
+
+	<main class="event-detail">
+		<!-- Hero Section -->
+		<header class="event-hero">
+			{event.data.coverImage && (
+				<div class="hero-image-wrapper">
+					<img src={event.data.coverImage} alt={event.data.title[lang]} />
+				</div>
+			)}
+			<div class="event-hero-content">
+				<h1>{event.data.title[lang]}</h1>
+				<p class="event-meta">
+					{new Date(event.data.dateFrom).toLocaleDateString(lang, {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					})}
+					{event.data.dateFrom.getTime() !== event.data.dateTo.getTime() && (
+						<>
+							{' - '}
+							{new Date(event.data.dateTo).toLocaleDateString(lang, {
+								month: 'long',
+								day: 'numeric'
+							})}
+						</>
+					)}
+					<span class="separator">|</span>
+					{event.data.location}
+				</p>
+			</div>
+		</header>
+
+		<!-- Description -->
+		<section class="event-description">
+			<Content />
+		</section>
+
+		<!-- Artists Lineup -->
+		{sortedArtists.length > 0 && (
+			<section class="event-section">
+				<h2>{t.events.lineup}</h2>
+				<div class="artist-grid">
+					{sortedArtists.map(artist => (
+						<a href={`/${lang}/artists/${artist.id}`} class="artist-card">
+							{artist.data.photo && (
+								<img src={artist.data.photo} alt={artist.data.name} />
+							)}
+							<div class="artist-card-content">
+								<h3>{artist.data.name}</h3>
+								<span class="artist-type">
+									{artist.data.type === 'resident' ? t.artists.resident : t.artists.guest}
+								</span>
+							</div>
+						</a>
+					))}
+				</div>
+			</section>
+		)}
+	</main>
+</BaseLayout>
+
+<style>
+	.event-detail {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 2rem 4rem;
+	}
+
+	.event-hero {
+		position: relative;
+		margin-bottom: 3rem;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.hero-image-wrapper {
+		position: relative;
+		width: 100%;
+		height: 450px;
+	}
+
+	.event-hero img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: blur(1px) brightness(0.6);
+	}
+
+	.event-hero-content {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 3rem 2rem 2rem;
+		background: linear-gradient(to top, rgba(10,10,10,0.95), transparent);
+		color: white;
+	}
+
+	.event-hero h1 {
+		font-size: 3.5rem;
+		font-weight: 200;
+		letter-spacing: 0.25em;
+		margin: 0 0 0.5rem 0;
+		text-transform: lowercase;
+	}
+
+	.event-meta {
+		font-size: 1.1rem;
+		opacity: 0.8;
+		letter-spacing: 0.05em;
+	}
+
+	.separator {
+		margin: 0 0.75rem;
+	}
+
+	.event-description {
+		margin: 3rem 0;
+		line-height: 1.8;
+		font-size: 1.1rem;
+		color: rgba(255,255,255,0.8);
+	}
+
+	.event-section {
+		margin: 4rem 0;
+	}
+
+	.event-section h2 {
+		font-size: 2rem;
+		font-weight: 200;
+		letter-spacing: 0.2em;
+		margin-bottom: 2rem;
+		text-transform: lowercase;
+	}
+
+	.artist-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 2rem;
+	}
+
+	.artist-card {
+		display: block;
+		transition: opacity 0.3s;
+	}
+
+	.artist-card:hover {
+		opacity: 0.7;
+	}
+
+	.artist-card img {
+		width: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
+		filter: grayscale(40%);
+		margin-bottom: 1rem;
+		border-radius: 4px;
+	}
+
+	.artist-card-content h3 {
+		font-size: 1.1rem;
+		font-weight: 300;
+		margin-bottom: 0.25rem;
+		letter-spacing: 0.05em;
+	}
+
+	.artist-type {
+		font-size: 0.85rem;
+		color: rgba(255,255,255,0.5);
+		text-transform: lowercase;
+		letter-spacing: 0.05em;
+	}
+
+	@media (max-width: 768px) {
+		.event-detail {
+			padding: 0 1rem 3rem;
+		}
+
+		.hero-image-wrapper {
+			height: 300px;
+		}
+
+		.event-hero h1 {
+			font-size: 2rem;
+		}
+
+		.event-hero-content {
+			padding: 2rem 1rem 1rem;
+		}
+
+		.artist-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1.5rem;
+		}
+	}
+</style>
