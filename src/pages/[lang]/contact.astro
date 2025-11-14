@@ -232,71 +232,72 @@ const currentContent = content[lang];
     margin-right: auto;
   }
 
-  .newsletter-form {
+  :global(.newsletter-form) {
     max-width: 500px;
     margin: 0 auto;
   }
 
-  .newsletter-input-group {
+  :global(.newsletter-input-group) {
     display: flex;
     gap: 0.75rem;
     margin-bottom: 1rem;
   }
 
-  .newsletter-input {
+  :global(.newsletter-input) {
     flex: 1;
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 4px;
-    padding: 0.75rem 1rem;
-    color: #e0e0e0;
-    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    color: #d0d0d0;
+    font-size: 1.125rem;
     font-weight: 300;
     transition: all 0.2s ease;
     font-family: inherit;
   }
 
-  .newsletter-input::placeholder {
+  :global(.newsletter-input::placeholder) {
     color: #808080;
   }
 
-  .newsletter-input:focus {
+  :global(.newsletter-input:focus) {
     outline: none;
     border-color: rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
   }
 
-  .newsletter-input:disabled {
+  :global(.newsletter-input:disabled) {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  .newsletter-button {
-    background: rgba(255, 255, 255, 0.1);
+  :global(.newsletter-button) {
+    background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 4px;
-    padding: 0.75rem 2rem;
+    padding: 0.5rem 1.5rem;
     color: #d0d0d0;
-    font-size: 1rem;
+    font-size: 1.125rem;
     font-weight: 300;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: inherit;
     white-space: nowrap;
+    text-decoration: none;
   }
 
-  .newsletter-button:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.15);
+  :global(.newsletter-button:hover:not(:disabled)) {
+    background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
   }
 
-  .newsletter-button:disabled {
+  :global(.newsletter-button:disabled) {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  .newsletter-message {
+  :global(.newsletter-message) {
     font-size: 0.9rem;
     font-weight: 300;
     margin-top: 0.5rem;
@@ -305,13 +306,13 @@ const currentContent = content[lang];
     text-align: center;
   }
 
-  .newsletter-message.success {
+  :global(.newsletter-message.success) {
     color: #a0d0a0;
     background: rgba(160, 208, 160, 0.1);
     border: 1px solid rgba(160, 208, 160, 0.2);
   }
 
-  .newsletter-message.error {
+  :global(.newsletter-message.error) {
     color: #d0a0a0;
     background: rgba(208, 160, 160, 0.1);
     border: 1px solid rgba(208, 160, 160, 0.2);
@@ -361,11 +362,11 @@ const currentContent = content[lang];
       gap: 2rem;
     }
 
-    .newsletter-input-group {
+    :global(.newsletter-input-group) {
       flex-direction: column;
     }
 
-    .newsletter-button {
+    :global(.newsletter-button) {
       width: 100%;
     }
   }
