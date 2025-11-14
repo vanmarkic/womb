@@ -11,12 +11,18 @@ dateTo: 2024-02-17
 location: Brussels
 coverImage: /womb/episode-3-cover.jpg
 media:
-  - /womb/episode-3-atmosphere-1.jpg
-  - /womb/episode-3-atmosphere-2.jpg
-  - /womb/episode-3-atmosphere-3.jpg
-  - /womb/episode-3-atmosphere-4.jpg
-  - /womb/episode-3-atmosphere-5.jpg
-  - /womb/episode-3-atmosphere-6.jpg
+  - type: photo
+    file: /womb/episode-3-atmosphere-1.jpg
+  - type: photo
+    file: /womb/episode-3-atmosphere-2.jpg
+  - type: photo
+    file: /womb/episode-3-atmosphere-3.jpg
+  - type: photo
+    file: /womb/episode-3-atmosphere-4.jpg
+  - type: photo
+    file: /womb/episode-3-atmosphere-5.jpg
+  - type: photo
+    file: /womb/episode-3-atmosphere-6.jpg
 artists:
   - rafael-aragon
   - thangi

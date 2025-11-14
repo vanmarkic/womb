@@ -47,13 +47,11 @@ const sortedArtists = [...residents, ...guests];
 		<header class="event-hero">
 			{event.data.coverImage && (
 				<div class="hero-image-wrapper">
-					<Image
+					<img
 						src={event.data.coverImage}
 						alt={event.data.title[lang]}
 						width={1200}
 						height={675}
-						format="webp"
-						quality={85}
 						loading="eager"
 					/>
 				</div>
