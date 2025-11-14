@@ -26,11 +26,12 @@ const events = defineCollection({
 		location: z.string(),
 		coverImage: z.string().optional(),
 		artists: z.array(z.string()),
-		audioTracks: z.array(z.object({
-			title: z.string(),
-			artist: z.string(),
-			audioFile: z.string(),
-		})).optional(),
+	audioTracks: z.array(z.object({
+		title: z.string(),
+		artist: z.string(),
+		audioFile: z.string().optional(),
+		soundcloudUrl: z.string().optional(),
+	})).optional(),
 		media: z.array(z.object({
 			type: z.enum(['photo', 'video']),
 			file: z.string(),
