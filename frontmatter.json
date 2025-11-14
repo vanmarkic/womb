@@ -1,0 +1,232 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.framework.id": "astro",
+  "frontMatter.content.publicFolder": "public",
+  "frontMatter.preview.host": "http://localhost:4340",
+  "frontMatter.dashboard.openOnStart": false,
+  "frontMatter.git.enabled": true,
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "event",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Number",
+          "name": "number",
+          "type": "number",
+          "required": true
+        },
+        {
+          "title": "Title (EN)",
+          "name": "title.en",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Title (FR)",
+          "name": "title.fr",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Date From",
+          "name": "dateFrom",
+          "type": "datetime",
+          "required": true,
+          "dateFormat": "yyyy-MM-dd"
+        },
+        {
+          "title": "Date To",
+          "name": "dateTo",
+          "type": "datetime",
+          "required": true,
+          "dateFormat": "yyyy-MM-dd"
+        },
+        {
+          "title": "Location",
+          "name": "location",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Cover Image",
+          "name": "coverImage",
+          "type": "image",
+          "isPreviewImage": true
+        },
+        {
+          "title": "Artists",
+          "name": "artists",
+          "type": "tags",
+          "taxonomyLimit": 20
+        }
+      ]
+    },
+    {
+      "name": "artist",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Name",
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Type",
+          "name": "type",
+          "type": "choice",
+          "choices": ["resident", "guest"],
+          "required": true
+        },
+        {
+          "title": "Photo",
+          "name": "photo",
+          "type": "image"
+        },
+        {
+          "title": "Instagram",
+          "name": "instagram",
+          "type": "string"
+        },
+        {
+          "title": "SoundCloud",
+          "name": "soundcloud",
+          "type": "string"
+        },
+        {
+          "title": "Website",
+          "name": "website",
+          "type": "string"
+        },
+        {
+          "title": "Order",
+          "name": "order",
+          "type": "number",
+          "default": 999
+        }
+      ]
+    },
+    {
+      "name": "recording",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Artist",
+          "name": "artist",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Event",
+          "name": "event",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Duration (seconds)",
+          "name": "duration",
+          "type": "number",
+          "required": true
+        },
+        {
+          "title": "Audio File",
+          "name": "audioFile",
+          "type": "file",
+          "fileExtensions": ["wav", "mp3", "m4a"]
+        },
+        {
+          "title": "Date",
+          "name": "date",
+          "type": "datetime",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "media",
+      "pageBundle": false,
+      "previewPath": null,
+      "fields": [
+        {
+          "title": "Type",
+          "name": "type",
+          "type": "choice",
+          "choices": ["photo", "video"],
+          "required": true
+        },
+        {
+          "title": "File",
+          "name": "file",
+          "type": "file",
+          "required": true
+        },
+        {
+          "title": "Author",
+          "name": "author",
+          "type": "string"
+        },
+        {
+          "title": "Date",
+          "name": "date",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "title": "Event",
+          "name": "event",
+          "type": "string"
+        },
+        {
+          "title": "Artists",
+          "name": "artists",
+          "type": "tags"
+        }
+      ]
+    }
+  ],
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "Events",
+      "path": "[[workspace]]/src/content/events"
+    },
+    {
+      "title": "Artists",
+      "path": "[[workspace]]/src/content/artists"
+    },
+    {
+      "title": "Recordings",
+      "path": "[[workspace]]/src/content/recordings"
+    },
+    {
+      "title": "Media",
+      "path": "[[workspace]]/src/content/media"
+    }
+  ],
+  "frontMatter.data.files": [
+    {
+      "id": "artistsList",
+      "title": "Artists List",
+      "file": "[[workspace]]/src/data/artists.json",
+      "fileType": "json",
+      "labelField": "name",
+      "schema": {
+        "title": "Artist",
+        "type": "object",
+        "properties": {
+          "slug": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      }
+    }
+  ]
+}
