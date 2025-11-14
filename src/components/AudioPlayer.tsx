@@ -155,12 +155,16 @@ export default function AudioPlayer({ audioUrl, title, onEnded, autoPlay = false
 	useEffect(() => {
 		// Listen for other players starting
 		const handleOtherPlayerStart = (e: CustomEvent) => {
-			// Don't pause if this is part of the same playlist
-			if (e.detail.playlistIndex !== undefined && playlistIndex !== undefined) {
-				// Allow playlist to continue
-				return;
+			// Only skip pausing if this is the same player or part of the same playlist auto-play sequence
+			// For manual plays, always stop other players
+			if (e.detail.player === audioRef.current) {
+				return; // Don't pause self
 			}
-			if (e.detail.player !== audioRef.current && audioRef.current) {
+			
+			// Only allow continuation if both are in the same playlist AND it's an auto-play transition
+			// (auto-play transitions are handled via onEnded callback, not this event)
+			// For all other cases, stop this player
+			if (audioRef.current && isPlaying) {
 				audioRef.current.pause();
 				setIsPlaying(false);
 			}
@@ -172,7 +176,7 @@ export default function AudioPlayer({ audioUrl, title, onEnded, autoPlay = false
 			window.removeEventListener('recording-play-request', handleOtherPlayerStart as EventListener);
 			// No need to revoke URL since we're using direct streaming
 		};
-	}, [playlistIndex]);
+	}, [playlistIndex, isPlaying]);
 
 	// Reset initialization when audio URL changes
 	useEffect(() => {
