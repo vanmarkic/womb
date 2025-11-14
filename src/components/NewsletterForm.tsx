@@ -6,25 +6,24 @@ interface NewsletterFormProps {
 
 export default function NewsletterForm({ lang }: NewsletterFormProps) {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
   const translations = {
     en: {
       placeholder: 'Enter your email',
       button: 'Subscribe',
-      buttonLoading: 'Subscribing...',
-      success: 'Thank you for subscribing!',
-      error: 'Something went wrong. Please try again.',
+      success: 'Opening your email client...',
       invalidEmail: 'Please enter a valid email address.',
+      subject: 'Newsletter Subscription',
+      body: 'Please subscribe me to the WOMB newsletter.',
     },
     fr: {
       placeholder: 'Entrez votre email',
       button: 'S\'abonner',
-      buttonLoading: 'Abonnement...',
-      success: 'Merci de vous être abonné !',
-      error: 'Une erreur s\'est produite. Veuillez réessayer.',
+      success: 'Ouverture de votre client email...',
       invalidEmail: 'Veuillez entrer une adresse email valide.',
+      subject: 'Abonnement Newsletter',
+      body: 'Veuillez m\'abonner à la newsletter WOMB.',
     },
   };
 
@@ -35,50 +34,34 @@ export default function NewsletterForm({ lang }: NewsletterFormProps) {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = async (e: JSX.TargetedEvent<HTMLFormElement, Event>) => {
+  const handleSubmit = (e: JSX.TargetedEvent<HTMLFormElement, Event>) => {
     e.preventDefault();
     
     if (!email.trim()) {
       setMessage(t.invalidEmail);
-      setStatus('error');
       return;
     }
 
     if (!validateEmail(email)) {
       setMessage(t.invalidEmail);
-      setStatus('error');
       return;
     }
 
-    setStatus('loading');
-    setMessage('');
-
-    try {
-      // TODO: Replace with actual newsletter service integration
-      // For now, this is a placeholder that simulates an API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // In production, you would make an actual API call here:
-      // const response = await fetch('/api/newsletter/subscribe', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email }),
-      // });
-      // if (!response.ok) throw new Error('Subscription failed');
-
-      setStatus('success');
-      setMessage(t.success);
-      setEmail('');
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setStatus('idle');
-        setMessage('');
-      }, 5000);
-    } catch (error) {
-      setStatus('error');
-      setMessage(t.error);
-    }
+    // Create mailto link with email in body
+    const subject = encodeURIComponent(t.subject);
+    const body = encodeURIComponent(`${t.body}\n\nEmail: ${email}`);
+    const mailtoLink = `mailto:newsletter@womb-ambient.com?subject=${subject}&body=${body}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    setMessage(t.success);
+    setEmail('');
+    
+    // Reset message after 3 seconds
+    setTimeout(() => {
+      setMessage('');
+    }, 3000);
   };
 
   return (
@@ -90,19 +73,17 @@ export default function NewsletterForm({ lang }: NewsletterFormProps) {
           onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
           placeholder={t.placeholder}
           class="newsletter-input"
-          disabled={status === 'loading'}
           required
         />
         <button
           type="submit"
           class="newsletter-button"
-          disabled={status === 'loading' || status === 'success'}
         >
-          {status === 'loading' ? t.buttonLoading : t.button}
+          {t.button}
         </button>
       </div>
       {message && (
-        <p class={`newsletter-message ${status === 'success' ? 'success' : 'error'}`}>
+        <p class={`newsletter-message ${message === t.success ? 'success' : 'error'}`}>
           {message}
         </p>
       )}
