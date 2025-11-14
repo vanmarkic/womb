@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n';
+
+export async function getStaticPaths() {
+  const languages = ['en', 'fr'] as const;
+  return languages.map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props;
+
+const content = {
+  en: {
+    title: 'About WOMB',
+    intro: 'WOMB is a Brussels-based ambient music collective dedicated to creating immersive sonic experiences.',
+    mission: {
+      title: 'Our Mission',
+      text: 'We curate and present ambient music events that explore the boundaries between sound, space, and consciousness. Our events feature both resident artists and international guests, creating a unique fusion of local and global perspectives on ambient music.'
+    },
+    philosophy: {
+      title: 'Philosophy',
+      text: 'WOMB believes in the transformative power of ambient music. We create spaces where listeners can disconnect from the everyday and immerse themselves in carefully curated sonic landscapes. Each event is designed as a journey, with artists selected for their ability to create coherent, evolving soundscapes that resonate with our dark, impressionist aesthetic.'
+    },
+    community: {
+      title: 'Community',
+      text: 'At the heart of WOMB is our community of artists, listeners, and collaborators. We foster connections between ambient music enthusiasts, providing a platform for both established and emerging artists to share their vision.'
+    }
+  },
+  fr: {
+    title: 'À propos de WOMB',
+    intro: 'WOMB est un collectif de musique ambient basé à Bruxelles, dédié à la création d\'expériences sonores immersives.',
+    mission: {
+      title: 'Notre Mission',
+      text: 'Nous organisons et présentons des événements de musique ambient qui explorent les frontières entre le son, l\'espace et la conscience. Nos événements mettent en vedette des artistes résidents et des invités internationaux, créant une fusion unique de perspectives locales et globales sur la musique ambient.'
+    },
+    philosophy: {
+      title: 'Philosophie',
+      text: 'WOMB croit au pouvoir transformateur de la musique ambient. Nous créons des espaces où les auditeurs peuvent se déconnecter du quotidien et s\'immerger dans des paysages sonores soigneusement sélectionnés. Chaque événement est conçu comme un voyage, avec des artistes sélectionnés pour leur capacité à créer des paysages sonores cohérents et évolutifs qui résonnent avec notre esthétique sombre et impressionniste.'
+    },
+    community: {
+      title: 'Communauté',
+      text: 'Au cœur de WOMB se trouve notre communauté d\'artistes, d\'auditeurs et de collaborateurs. Nous favorisons les connexions entre les passionnés de musique ambient, offrant une plateforme aux artistes établis et émergents pour partager leur vision.'
+    }
+  }
+};
+
+const currentContent = content[lang];
+---
+
+<BaseLayout title={currentContent.title} lang={lang}>
+  <div class="about-page">
+    <header class="page-header">
+      <h1>{currentContent.title}</h1>
+      <p class="intro">{currentContent.intro}</p>
+    </header>
+
+    <div class="content-sections">
+      <section class="content-section">
+        <h2>{currentContent.mission.title}</h2>
+        <p>{currentContent.mission.text}</p>
+      </section>
+
+      <section class="content-section">
+        <h2>{currentContent.philosophy.title}</h2>
+        <p>{currentContent.philosophy.text}</p>
+      </section>
+
+      <section class="content-section">
+        <h2>{currentContent.community.title}</h2>
+        <p>{currentContent.community.text}</p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    font-weight: 200;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+  }
+
+  .intro {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #808080;
+    font-weight: 300;
+  }
+
+  .content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.75rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: #d0d0d0;
+  }
+
+  .content-section p {
+    line-height: 1.8;
+    color: #808080;
+    font-weight: 300;
+  }
+
+  @media (max-width: 768px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .intro {
+      font-size: 1.125rem;
+    }
+  }
+</style>

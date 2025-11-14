@@ -1,0 +1,237 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n';
+
+export async function getStaticPaths() {
+  const languages = ['en', 'fr'] as const;
+  return languages.map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props;
+
+const content = {
+  en: {
+    title: 'Contact',
+    intro: 'Get in touch with WOMB for bookings, collaborations, or general inquiries.',
+    sections: {
+      bookings: {
+        title: 'Artist Bookings',
+        email: 'bookings@womb-ambient.com',
+        description: 'For artist bookings and event inquiries'
+      },
+      press: {
+        title: 'Press & Media',
+        email: 'press@womb-ambient.com',
+        description: 'For press releases, interviews, and media requests'
+      },
+      general: {
+        title: 'General Inquiries',
+        email: 'info@womb-ambient.com',
+        description: 'For general questions and information'
+      }
+    },
+    social: {
+      title: 'Follow Us',
+      instagram: 'Instagram',
+      soundcloud: 'SoundCloud'
+    }
+  },
+  fr: {
+    title: 'Contact',
+    intro: 'Contactez WOMB pour des réservations, collaborations, ou questions générales.',
+    sections: {
+      bookings: {
+        title: 'Réservations d\'Artistes',
+        email: 'bookings@womb-ambient.com',
+        description: 'Pour les réservations d\'artistes et demandes d\'événements'
+      },
+      press: {
+        title: 'Presse & Médias',
+        email: 'press@womb-ambient.com',
+        description: 'Pour les communiqués de presse, interviews, et demandes médias'
+      },
+      general: {
+        title: 'Demandes Générales',
+        email: 'info@womb-ambient.com',
+        description: 'Pour les questions et informations générales'
+      }
+    },
+    social: {
+      title: 'Suivez-nous',
+      instagram: 'Instagram',
+      soundcloud: 'SoundCloud'
+    }
+  }
+};
+
+const currentContent = content[lang];
+---
+
+<BaseLayout title={currentContent.title} lang={lang}>
+  <div class="contact-page">
+    <header class="page-header">
+      <h1>{currentContent.title}</h1>
+      <p class="intro">{currentContent.intro}</p>
+    </header>
+
+    <div class="contact-sections">
+      <section class="contact-section">
+        <h2>{currentContent.sections.bookings.title}</h2>
+        <p class="description">{currentContent.sections.bookings.description}</p>
+        <a href={`mailto:${currentContent.sections.bookings.email}`} class="email-link">
+          {currentContent.sections.bookings.email}
+        </a>
+      </section>
+
+      <section class="contact-section">
+        <h2>{currentContent.sections.press.title}</h2>
+        <p class="description">{currentContent.sections.press.description}</p>
+        <a href={`mailto:${currentContent.sections.press.email}`} class="email-link">
+          {currentContent.sections.press.email}
+        </a>
+      </section>
+
+      <section class="contact-section">
+        <h2>{currentContent.sections.general.title}</h2>
+        <p class="description">{currentContent.sections.general.description}</p>
+        <a href={`mailto:${currentContent.sections.general.email}`} class="email-link">
+          {currentContent.sections.general.email}
+        </a>
+      </section>
+    </div>
+
+    <div class="social-section">
+      <h2>{currentContent.social.title}</h2>
+      <div class="social-links">
+        <a
+          href="https://instagram.com/womb_ambient"
+          target="_blank"
+          rel="noopener"
+          class="social-link"
+        >
+          {currentContent.social.instagram}
+        </a>
+        <a
+          href="https://soundcloud.com/womb-ambient"
+          target="_blank"
+          rel="noopener"
+          class="social-link"
+        >
+          {currentContent.social.soundcloud}
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    font-weight: 200;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+  }
+
+  .intro {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #808080;
+    font-weight: 300;
+  }
+
+  .contact-sections {
+    display: grid;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .contact-section h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    color: #d0d0d0;
+  }
+
+  .description {
+    color: #808080;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  .email-link {
+    display: inline-block;
+    color: #d0d0d0;
+    text-decoration: none;
+    font-size: 1.125rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .email-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .social-section {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .social-section h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    color: #d0d0d0;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+  }
+
+  .social-link {
+    color: #808080;
+    text-decoration: none;
+    font-size: 1.125rem;
+    transition: color 0.2s ease;
+  }
+
+  .social-link:hover {
+    color: #d0d0d0;
+  }
+
+  @media (max-width: 768px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .intro {
+      font-size: 1.125rem;
+    }
+
+    .contact-sections {
+      gap: 2rem;
+    }
+  }
+</style>
