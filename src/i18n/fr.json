@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "events": "Événements",
+    "artists": "Artistes",
+    "about": "À propos",
+    "contact": "Contact"
+  },
+  "events": {
+    "title": "Événements",
+    "archive": "Archives",
+    "lineup": "Line-up",
+    "recordings": "Enregistrements",
+    "gallery": "Galerie"
+  },
+  "artists": {
+    "resident": "Résident",
+    "guest": "Invité",
+    "events": "Événements",
+    "recordings": "Enregistrements",
+    "allArtists": "Tous les artistes"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur"
+  }
+}
