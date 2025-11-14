@@ -1,0 +1,185 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { t } from '../../../i18n';
+
+export async function getStaticPaths() {
+  const languages = ['en', 'fr'] as const;
+  return languages.map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props;
+const artists = await getCollection('artists');
+
+// Sort artists: residents first (by order), then guests (alphabetically)
+artists.sort((a, b) => {
+  if (a.data.type === 'resident' && b.data.type === 'guest') return -1;
+  if (a.data.type === 'guest' && b.data.type === 'resident') return 1;
+  if (a.data.type === 'resident') {
+    return a.data.order - b.data.order;
+  }
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const residents = artists.filter(a => a.data.type === 'resident');
+const guests = artists.filter(a => a.data.type === 'guest');
+---
+
+<BaseLayout title={t(lang, 'nav.artists')} lang={lang}>
+  <div class="artists-page">
+    <header class="page-header">
+      <h1>{t(lang, 'nav.artists')}</h1>
+    </header>
+
+    {residents.length > 0 && (
+      <section class="artists-section">
+        <h2>{t(lang, 'artists.residents')}</h2>
+        <div class="artists-grid">
+          {residents.map((artist) => (
+            <a
+              href={`/${lang}/artists/${artist.slug}`}
+              class="artist-card"
+            >
+              <div class="artist-image">
+                {artist.data.photo ? (
+                  <img src={artist.data.photo} alt={artist.data.name} />
+                ) : (
+                  <div class="artist-placeholder">
+                    <span>{artist.data.name.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              <h3>{artist.data.name}</h3>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {guests.length > 0 && (
+      <section class="artists-section">
+        <h2>{t(lang, 'artists.guests')}</h2>
+        <div class="artists-grid">
+          {guests.map((artist) => (
+            <a
+              href={`/${lang}/artists/${artist.slug}`}
+              class="artist-card"
+            >
+              <div class="artist-image">
+                {artist.data.photo ? (
+                  <img src={artist.data.photo} alt={artist.data.name} />
+                ) : (
+                  <div class="artist-placeholder">
+                    <span>{artist.data.name.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              <h3>{artist.data.name}</h3>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .artists-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    font-weight: 200;
+    letter-spacing: 0.1em;
+  }
+
+  .artists-section {
+    margin-bottom: 4rem;
+  }
+
+  .artists-section h2 {
+    font-size: 1.75rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #808080;
+  }
+
+  .artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .artist-card {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+
+  .artist-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .artist-image {
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .artist-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.2s ease;
+  }
+
+  .artist-card:hover .artist-image img {
+    filter: brightness(1.1);
+  }
+
+  .artist-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  }
+
+  .artist-placeholder span {
+    font-size: 3rem;
+    font-weight: 200;
+    color: #808080;
+  }
+
+  .artist-card h3 {
+    font-size: 1.125rem;
+    font-weight: 300;
+    color: #d0d0d0;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 768px) {
+    .artists-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+</style>

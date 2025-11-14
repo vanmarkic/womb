@@ -8,6 +8,8 @@ const artists = defineCollection({
 		photo: z.string().optional(),
 		instagram: z.string().optional(),
 		soundcloud: z.string().optional(),
+		website: z.string().optional(),
+		order: z.number().default(999), // For sorting residents vs guests
 	}),
 });
 

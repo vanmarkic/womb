@@ -1,0 +1,263 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { t } from '../../../i18n';
+import AudioPlayer from '../../../components/AudioPlayer.astro';
+
+export async function getStaticPaths() {
+  const artists = await getCollection('artists');
+  const languages = ['en', 'fr'] as const;
+
+  return languages.flatMap((lang) =>
+    artists.map((artist) => ({
+      params: { lang, slug: artist.slug },
+      props: { artist, lang },
+    }))
+  );
+}
+
+const { artist, lang } = Astro.props;
+const { Content } = await artist.render();
+
+// Get related events and recordings
+const events = await getCollection('events', (event) =>
+  event.data.artists.includes(artist.slug)
+);
+const recordings = await getCollection('recordings', (recording) =>
+  recording.data.artist === artist.slug
+);
+
+// Sort events by date (newest first)
+events.sort((a, b) => b.data.dateFrom.getTime() - a.data.dateFrom.getTime());
+
+// Parse bio sections from markdown content
+const bioSections = artist.body.split(/## Bio \((EN|FR)\)/);
+const bioEN = bioSections.find((_, i) => bioSections[i - 1]?.includes('EN'));
+const bioFR = bioSections.find((_, i) => bioSections[i - 1]?.includes('FR'));
+const currentBio = lang === 'en' ? bioEN : bioFR;
+---
+
+<BaseLayout title={artist.data.name} lang={lang}>
+  <article class="artist-detail">
+    <header class="artist-header">
+      {artist.data.photo && (
+        <div class="artist-photo">
+          <img src={artist.data.photo} alt={artist.data.name} />
+        </div>
+      )}
+      <div class="artist-info">
+        <h1>{artist.data.name}</h1>
+        <span class="artist-type">
+          {t(lang, `artists.${artist.data.type}`)}
+        </span>
+        <nav class="artist-social">
+          {artist.data.instagram && (
+            <a href={artist.data.instagram} target="_blank" rel="noopener">
+              Instagram
+            </a>
+          )}
+          {artist.data.soundcloud && (
+            <a href={artist.data.soundcloud} target="_blank" rel="noopener">
+              SoundCloud
+            </a>
+          )}
+          {artist.data.website && (
+            <a href={artist.data.website} target="_blank" rel="noopener">
+              Website
+            </a>
+          )}
+        </nav>
+      </div>
+    </header>
+
+    {currentBio && (
+      <section class="artist-bio">
+        <h2>{t(lang, 'artists.bio')}</h2>
+        <div class="prose" set:html={currentBio} />
+      </section>
+    )}
+
+    {events.length > 0 && (
+      <section class="artist-events">
+        <h2>{t(lang, 'artists.events')}</h2>
+        <div class="events-list">
+          {events.map((event) => (
+            <a
+              href={`/${lang}/events/${event.slug}`}
+              class="event-card"
+            >
+              {event.data.coverImage && (
+                <img src={event.data.coverImage} alt={event.data.title[lang]} />
+              )}
+              <div class="event-card-content">
+                <h3>{event.data.title[lang]}</h3>
+                <time>{event.data.dateFrom.toLocaleDateString()}</time>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {recordings.length > 0 && (
+      <section class="artist-recordings">
+        <h2>{t(lang, 'artists.recordings')}</h2>
+        <div class="recordings-list">
+          {recordings.map((recording) => (
+            <div class="recording-item">
+              <h3>{recording.data.title}</h3>
+              <AudioPlayer
+                src={recording.data.audioFile}
+                title={recording.data.title}
+                artist={artist.data.name}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .artist-detail {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .artist-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .artist-photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .artist-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .artist-info {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .artist-info h1 {
+    font-size: 2.5rem;
+    font-weight: 200;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .artist-type {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .artist-social {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .artist-social a {
+    color: #808080;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .artist-social a:hover {
+    color: #d0d0d0;
+  }
+
+  .artist-bio {
+    margin-bottom: 3rem;
+  }
+
+  .artist-bio h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .prose {
+    line-height: 1.7;
+    color: #d0d0d0;
+  }
+
+  .events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .event-card {
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .event-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .event-card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+
+  .event-card-content {
+    padding: 1rem;
+  }
+
+  .event-card h3 {
+    font-size: 1.125rem;
+    font-weight: 300;
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+  }
+
+  .event-card time {
+    color: #808080;
+    font-size: 0.875rem;
+  }
+
+  .recordings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .recording-item h3 {
+    font-size: 1.125rem;
+    font-weight: 300;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .artist-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+</style>
