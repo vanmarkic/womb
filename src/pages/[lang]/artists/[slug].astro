@@ -83,7 +83,7 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
         <div class="events-list">
           {events.map((event) => (
             <a
-              href={`/${lang}/events/${event.slug}`}
+              href={`/womb/${lang}/events/${event.slug}`}
               class="event-card"
             >
               {event.data.coverImage && (

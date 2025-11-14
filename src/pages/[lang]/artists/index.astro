@@ -40,7 +40,7 @@ const guests = artists.filter(a => a.data.type === 'guest');
         <div class="artists-grid">
           {residents.map((artist) => (
             <a
-              href={`/${lang}/artists/${artist.slug}`}
+              href={`/womb/${lang}/artists/${artist.slug}`}
               class="artist-card"
             >
               <div class="artist-image">
@@ -65,7 +65,7 @@ const guests = artists.filter(a => a.data.type === 'guest');
         <div class="artists-grid">
           {guests.map((artist) => (
             <a
-              href={`/${lang}/artists/${artist.slug}`}
+              href={`/womb/${lang}/artists/${artist.slug}`}
               class="artist-card"
             >
               <div class="artist-image">

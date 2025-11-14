@@ -16,34 +16,34 @@ function isActive(path: string): boolean {
 
 // Helper to switch language
 function switchLang(toLang: Language): string {
-	return currentPath.replace(`/${lang}/`, `/${toLang}/`);
+	return currentPath.replace(`/womb/${lang}/`, `/womb/${toLang}/`);
 }
 ---
 
 <header class="header">
-	<a href={`/${lang}/events`} class="logo">WOMB</a>
+	<a href={`/womb/${lang}/events`} class="logo">WOMB</a>
 
 	<nav class="nav">
 		<a
-			href={`/${lang}/events`}
+			href={`/womb/${lang}/events`}
 			class:list={['nav-link', { active: isActive('/events') }]}
 		>
 			{t.nav.events}
 		</a>
 		<a
-			href={`/${lang}/artists`}
+			href={`/womb/${lang}/artists`}
 			class:list={['nav-link', { active: isActive('/artists') }]}
 		>
 			{t.nav.artists}
 		</a>
 		<a
-			href={`/${lang}/about`}
+			href={`/womb/${lang}/about`}
 			class:list={['nav-link', { active: isActive('/about') }]}
 		>
 			{t.nav.about}
 		</a>
 		<a
-			href={`/${lang}/contact`}
+			href={`/womb/${lang}/contact`}
 			class:list={['nav-link', { active: isActive('/contact') }]}
 		>
 			{t.nav.contact}

@@ -80,7 +80,7 @@ const sortedArtists = [...residents, ...guests];
 				<h2>{t.events.lineup}</h2>
 				<div class="artist-grid">
 					{sortedArtists.map(artist => (
-						<a href={`/${lang}/artists/${artist.id}`} class="artist-card">
+						<a href={`/womb/${lang}/artists/${artist.id}`} class="artist-card">
 							{artist.data.photo && (
 								<img src={artist.data.photo} alt={artist.data.name} />
 							)}

@@ -29,7 +29,7 @@ const t = translations[lang];
 
 		<div class="events-grid">
 			{events.map(event => (
-				<a href={`/${lang}/events/${event.id}`} class="event-card">
+				<a href={`/womb/${lang}/events/${event.id}`} class="event-card">
 					{event.data.coverImage && (
 						<img
 							src={event.data.coverImage}
