@@ -26,6 +26,13 @@
 				<p class="tagline">ambient events & artist curation</p>
 			</div>
 		</div>
+
+		<!-- Language selector overlay -->
+		<div class="lang-enter">
+			<a href="/womb/en/events" class="lang-option">EN</a>
+			<span class="lang-separator">/</span>
+			<a href="/womb/fr/events" class="lang-option">FR</a>
+		</div>
 	</body>
 </html>
 
@@ -1030,6 +1037,39 @@
 		.figure-4, .figure-5, .figure-6 {
 			width: 250px;
 			height: 400px;
+		}
+	}
+
+	/* Language selector */
+	.lang-enter {
+		position: fixed;
+		bottom: 2rem;
+		right: 2rem;
+		z-index: 100;
+		font-size: 1.2rem;
+		letter-spacing: 0.2em;
+	}
+
+	.lang-option {
+		color: rgba(255, 255, 255, 0.4);
+		text-decoration: none;
+		transition: color 0.3s;
+	}
+
+	.lang-option:hover {
+		color: rgba(255, 255, 255, 0.9);
+	}
+
+	.lang-separator {
+		color: rgba(255, 255, 255, 0.2);
+		margin: 0 0.5rem;
+	}
+
+	@media (max-width: 768px) {
+		.lang-enter {
+			bottom: 1rem;
+			right: 1rem;
+			font-size: 1rem;
 		}
 	}
 </style>
