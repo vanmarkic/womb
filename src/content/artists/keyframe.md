@@ -1,7 +1,7 @@
 ---
 name: "Keyframe"
 type: "guest"
-
+photo: "/womb/artist-photo-6.jpg"
 
 soundcloud: "https://soundcloud.com/keyframe"
 

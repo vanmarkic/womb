@@ -15,9 +15,11 @@ export async function getStaticPaths() {
 
 	return languages.flatMap(lang =>
 		events.map(event => {
-			const eventArtists = artists.filter(a =>
-				event.data.artists.includes(a.id)
-			);
+			const eventArtists = artists.filter(a => {
+				// Strip .md extension from artist ID for comparison
+				const artistIdWithoutExt = a.id.replace('.md', '');
+				return event.data.artists.includes(artistIdWithoutExt);
+			});
 
 			return {
 				params: { lang, slug: event.id.replace('.md', '') },
@@ -80,9 +82,11 @@ const sortedArtists = [...residents, ...guests];
 		</header>
 
 		<!-- Description -->
-		<section class="event-description">
-			<Content />
-		</section>
+		{event.data.description && (
+			<section class="event-description">
+				<p>{event.data.description[lang]}</p>
+			</section>
+		)}
 
 		<!-- Artists Lineup -->
 		{sortedArtists.length > 0 && (
@@ -90,7 +94,7 @@ const sortedArtists = [...residents, ...guests];
 				<h2>{t.events.lineup}</h2>
 				<div class="artist-grid">
 					{sortedArtists.map(artist => (
-						<a href={`/womb/${lang}/artists/${artist.id}`} class="artist-card">
+						<a href={`/womb/${lang}/artists/${artist.id.replace('.md', '')}`} class="artist-card">
 							{artist.data.photo && (
 								<Image
 									src={artist.data.photo}

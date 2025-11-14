@@ -1,6 +1,7 @@
 ---
 name: Gibs
 type: guest
+photo: "/womb/artist-photo-2.jpg"
 ---
 
 ## Bio (EN)

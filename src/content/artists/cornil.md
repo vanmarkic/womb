@@ -1,6 +1,7 @@
 ---
 name: Jeremy Cornil
 type: guest
+photo: "/womb/episode-3-atmosphere-6.jpg"
 ---
 
 ## Bio (EN)

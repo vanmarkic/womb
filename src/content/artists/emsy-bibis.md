@@ -1,6 +1,7 @@
 ---
 name: Emsy Bibis
 type: guest
+photo: "/womb/artist-photo-5.jpg"
 ---
 
 ## Bio (EN)

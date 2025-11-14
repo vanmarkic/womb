@@ -1,6 +1,7 @@
 ---
 name: Rotor
 type: guest
+photo: "/womb/artist-photo-6.jpg"
 ---
 
 ## Bio (EN)

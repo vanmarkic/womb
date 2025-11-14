@@ -1,6 +1,7 @@
 ---
 name: P4CO
 type: guest
+photo: "/womb/artist-photo-4.jpg"
 ---
 
 ## Bio (EN)

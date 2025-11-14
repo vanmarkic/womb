@@ -52,7 +52,7 @@
         {
           "title": "Cover Image",
           "name": "coverImage",
-          "type": "image",
+          "type": "string",
           "isPreviewImage": true
         },
         {
@@ -60,6 +60,18 @@
           "name": "artists",
           "type": "tags",
           "taxonomyLimit": 20
+        },
+        {
+          "title": "Audio Tracks",
+          "name": "audioTracks",
+          "type": "block",
+          "fieldGroup": ["audioTracks"]
+        },
+        {
+          "title": "Media",
+          "name": "media",
+          "type": "block",
+          "fieldGroup": ["media"]
         }
       ]
     },
@@ -84,7 +96,7 @@
         {
           "title": "Photo",
           "name": "photo",
-          "type": "image"
+          "type": "string"
         },
         {
           "title": "Instagram",
@@ -141,8 +153,7 @@
         {
           "title": "Audio File",
           "name": "audioFile",
-          "type": "file",
-          "fileExtensions": ["wav", "mp3", "m4a"]
+          "type": "string"
         },
         {
           "title": "Date",
@@ -167,7 +178,7 @@
         {
           "title": "File",
           "name": "file",
-          "type": "file",
+          "type": "string",
           "required": true
         },
         {
@@ -210,6 +221,59 @@
     {
       "title": "Media",
       "path": "[[workspace]]/src/content/media"
+    }
+  ],
+  "frontMatter.taxonomy.fieldGroups": [
+    {
+      "id": "audioTracks",
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Artist",
+          "name": "artist",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Audio File",
+          "name": "audioFile",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "fields": [
+        {
+          "title": "Type",
+          "name": "type",
+          "type": "choice",
+          "choices": ["photo", "video"],
+          "required": true
+        },
+        {
+          "title": "File",
+          "name": "file",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Author",
+          "name": "author",
+          "type": "string"
+        },
+        {
+          "title": "Caption",
+          "name": "caption",
+          "type": "string"
+        }
+      ]
     }
   ],
   "frontMatter.data.files": [

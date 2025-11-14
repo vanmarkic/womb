@@ -1,6 +1,7 @@
 ---
 name: Il Bestiario
 type: guest
+photo: "/womb/episode-3-atmosphere-5.jpg"
 ---
 
 ## Bio (EN)

@@ -1,6 +1,7 @@
 ---
 name: Al Jive Maestro
 type: guest
+photo: "/womb/episode-3-atmosphere-2.jpg"
 ---
 
 ## Bio (EN)

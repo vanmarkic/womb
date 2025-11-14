@@ -1,6 +1,7 @@
 ---
 name: Catherine Danger
 type: guest
+photo: "/womb/artist-photo-3.jpg"
 ---
 
 ## Bio (EN)

@@ -315,6 +315,22 @@ const { lang, title } = Astro.props;
 		position: relative;
 		z-index: 1;
 		min-height: 100vh;
+		padding-top: 80px; /* Add space for fixed header */
+		transition: opacity 5s ease-in-out;
+	}
+
+	/* Inactive state - fade out all content */
+	body.inactive .main-content {
+		opacity: 0;
+	}
+
+	/* Header should be within main-content, but we target it specifically */
+	body.inactive .main-content .header {
+		opacity: 0;
+	}
+
+	body.inactive .sound-toggle {
+		opacity: 0;
 	}
 
 	/* Responsive adjustments */
@@ -339,6 +355,11 @@ const { lang, title } = Astro.props;
 		.sound-icon {
 			width: 20px;
 			height: 20px;
+		}
+
+		/* Adjust padding for fixed header on mobile */
+		.main-content {
+			padding-top: 120px; /* More space for mobile header (usually taller) */
 		}
 	}
 </style>
@@ -407,4 +428,43 @@ const { lang, title } = Astro.props;
 	window.addEventListener('beforeunload', () => {
 		soundEngine.destroy();
 	});
+
+	// Inactivity detection
+	let inactivityTimer: number | null = null;
+	const INACTIVITY_TIMEOUT = 3000; // 3 seconds
+
+	function resetInactivityTimer() {
+		// Clear existing timer
+		if (inactivityTimer) {
+			clearTimeout(inactivityTimer);
+		}
+
+		// Remove inactive class
+		document.body.classList.remove('inactive');
+
+		// Set new timer
+		inactivityTimer = setTimeout(() => {
+			document.body.classList.add('inactive');
+		}, INACTIVITY_TIMEOUT);
+	}
+
+	// Events that indicate user activity
+	const activityEvents = [
+		'mousemove',
+		'mousedown',
+		'keydown',
+		'scroll',
+		'touchstart',
+		'touchmove',
+		'click',
+		'wheel'
+	];
+
+	// Add event listeners for all activity events
+	activityEvents.forEach(event => {
+		window.addEventListener(event, resetInactivityTimer, { passive: true });
+	});
+
+	// Start the timer on page load
+	resetInactivityTimer();
 </script>

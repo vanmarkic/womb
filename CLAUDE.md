@@ -56,6 +56,8 @@ All commands run from the project root:
 
 **Static Assets**: Place images and static files in `public/` directory.
 
+**Media Files**: Move all used pictures, videos, and audio files to the root of the `public/` folder (not in subdirectories).
+
 **Build Output**: Production builds generate to `./dist/` directory.
 
 ## Context7 MCP

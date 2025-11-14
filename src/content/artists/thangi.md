@@ -1,6 +1,7 @@
 ---
 name: Thangi
 type: resident
+photo: "/womb/episode-2-atmosphere-1.jpg"
 ---
 
 ## Bio (EN)

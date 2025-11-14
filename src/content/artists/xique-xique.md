@@ -1,6 +1,7 @@
 ---
 name: Xique-Xique
 type: guest
+photo: "/womb/episode-3-atmosphere-1.jpg"
 ---
 
 ## Bio (EN)

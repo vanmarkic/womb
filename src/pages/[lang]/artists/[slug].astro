@@ -1,43 +1,58 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { t } from '../../../i18n';
-import AudioPlayer from '../../../components/AudioPlayer.tsx';
+import Header from '../../../components/Header.astro';
+import { translations, type Language } from '../../../i18n';
 
 export async function getStaticPaths() {
   const artists = await getCollection('artists');
-  const languages = ['en', 'fr'] as const;
+  const languages: Language[] = ['en', 'fr'];
+  const events = await getCollection('events');
+  const recordings = await getCollection('recordings');
 
   return languages.flatMap((lang) =>
     artists.map((artist) => ({
-      params: { lang, slug: artist.slug },
-      props: { artist, lang },
+      params: { lang, slug: artist.id.replace('.md', '') },
+      props: { artist, lang, events, recordings },
     }))
   );
 }
 
-const { artist, lang } = Astro.props;
-const { Content } = await artist.render();
+const { artist, lang, events, recordings } = Astro.props;
 
-// Get related events and recordings
-const events = await getCollection('events', (event) =>
-  event.data.artists.includes(artist.slug)
-);
-const recordings = await getCollection('recordings', (recording) =>
-  recording.data.artist === artist.slug
+// Get related events
+const artistEvents = events.filter((event: CollectionEntry<'events'>) =>
+  event.data.artists.includes(artist.id.replace('.md', ''))
 );
 
-// Sort events by date (newest first)
-events.sort((a, b) => b.data.dateFrom.getTime() - a.data.dateFrom.getTime());
+// Get related recordings
+const artistRecordings = recordings.filter((recording: CollectionEntry<'recordings'>) =>
+  recording.data.artist.toLowerCase() === artist.data.name.toLowerCase()
+);
 
-// Parse bio sections from markdown content
-const bioSections = artist.body.split(/## Bio \((EN|FR)\)/);
-const bioEN = bioSections.find((_, i) => bioSections[i - 1]?.includes('EN'));
-const bioFR = bioSections.find((_, i) => bioSections[i - 1]?.includes('FR'));
-const currentBio = lang === 'en' ? bioEN : bioFR;
+// Sort events by number (newest first)
+artistEvents.sort((a: CollectionEntry<'events'>, b: CollectionEntry<'events'>) =>
+  b.data.number - a.data.number
+);
+
+// Sort recordings by date (newest first)
+if (artistRecordings.length > 0) {
+  artistRecordings.sort((a: CollectionEntry<'recordings'>, b: CollectionEntry<'recordings'>) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  );
+}
+
+// Format duration helper function
+const formatDuration = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 ---
 
 <BaseLayout title={artist.data.name} lang={lang}>
+  <Header lang={lang} />
   <article class="artist-detail">
     <header class="artist-header">
       {artist.data.photo && (
@@ -48,21 +63,23 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
       <div class="artist-info">
         <h1>{artist.data.name}</h1>
         <span class="artist-type">
-          {t(lang, `artists.${artist.data.type}`)}
+          {artist.data.type === 'resident'
+            ? translations[lang].artists.resident
+            : translations[lang].artists.guest}
         </span>
         <nav class="artist-social">
-          {artist.data.instagram && (
-            <a href={artist.data.instagram} target="_blank" rel="noopener">
+          {artist.data.links?.instagram && (
+            <a href={artist.data.links.instagram} target="_blank" rel="noopener">
               Instagram
             </a>
           )}
-          {artist.data.soundcloud && (
-            <a href={artist.data.soundcloud} target="_blank" rel="noopener">
+          {artist.data.links?.soundcloud && (
+            <a href={artist.data.links.soundcloud} target="_blank" rel="noopener">
               SoundCloud
             </a>
           )}
-          {artist.data.website && (
-            <a href={artist.data.website} target="_blank" rel="noopener">
+          {artist.data.links?.website && (
+            <a href={artist.data.links.website} target="_blank" rel="noopener">
               Website
             </a>
           )}
@@ -70,20 +87,22 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
       </div>
     </header>
 
-    {currentBio && (
+    {artist.data.bio && (
       <section class="artist-bio">
-        <h2>{t(lang, 'artists.bio')}</h2>
-        <div class="prose" set:html={currentBio} />
+        <h2>{translations[lang].artists.bio || 'Biography'}</h2>
+        <div class="prose">
+          <p>{artist.data.bio[lang]}</p>
+        </div>
       </section>
     )}
 
-    {events.length > 0 && (
+    {artistEvents.length > 0 && (
       <section class="artist-events">
-        <h2>{t(lang, 'artists.events')}</h2>
+        <h2>{translations[lang].events.title}</h2>
         <div class="events-list">
-          {events.map((event) => (
+          {artistEvents.map((event: CollectionEntry<'events'>) => (
             <a
-              href={`/womb/${lang}/events/${event.slug}`}
+              href={`/womb/${lang}/events/${event.id.replace('.md', '')}`}
               class="event-card"
             >
               {event.data.coverImage && (
@@ -91,7 +110,7 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
               )}
               <div class="event-card-content">
                 <h3>{event.data.title[lang]}</h3>
-                <time>{event.data.dateFrom.toLocaleDateString()}</time>
+                <time>{new Date(event.data.dateFrom).toLocaleDateString()}</time>
               </div>
             </a>
           ))}
@@ -99,20 +118,28 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
       </section>
     )}
 
-    {recordings.length > 0 && (
+    {artistRecordings.length > 0 && (
       <section class="artist-recordings">
-        <h2>{t(lang, 'artists.recordings')}</h2>
+        <h2>{translations[lang].recordings.title}</h2>
         <div class="recordings-list">
-          {recordings.map((recording) => (
-            <div class="recording-item">
-              <h3>{recording.data.title}</h3>
-              <AudioPlayer
-                client:load
-                src={recording.data.audioFile}
-                title={recording.data.title}
-                artist={artist.data.name}
-              />
-            </div>
+          {artistRecordings.map((recording: CollectionEntry<'recordings'>) => (
+            <a
+              href={`/womb/${lang}/recordings/${recording.id.replace('.md', '')}`}
+              class="recording-card"
+            >
+              <div class="recording-card-content">
+                <h3>{recording.data.title}</h3>
+                <div class="recording-meta">
+                  <time>{new Date(recording.data.date).toLocaleDateString()}</time>
+                  <span class="duration">{formatDuration(recording.data.duration)}</span>
+                </div>
+              </div>
+              <div class="play-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            </a>
           ))}
         </div>
       </section>
@@ -124,13 +151,13 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
   .artist-detail {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 3rem 1.5rem;
   }
 
   .artist-header {
     display: flex;
     gap: 2rem;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
     flex-wrap: wrap;
   }
 
@@ -186,13 +213,13 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
   }
 
   .artist-bio {
-    margin-bottom: 3rem;
+    margin-bottom: 5rem;
   }
 
   .artist-bio h2 {
     font-size: 1.5rem;
     font-weight: 300;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .prose {
@@ -200,10 +227,21 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
     color: #d0d0d0;
   }
 
+  .artist-events {
+    margin-bottom: 5rem;
+  }
+
+  .artist-events h2,
+  .artist-recordings h2 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+  }
+
   .events-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   .event-card {
@@ -248,10 +286,64 @@ const currentBio = lang === 'en' ? bioEN : bioFR;
     gap: 1.5rem;
   }
 
-  .recording-item h3 {
+  .recording-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .recording-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+  }
+
+  .recording-card-content {
+    flex: 1;
+  }
+
+  .recording-card h3 {
     font-size: 1.125rem;
     font-weight: 300;
-    margin-bottom: 0.75rem;
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+  }
+
+  .recording-meta {
+    display: flex;
+    gap: 1rem;
+    color: #808080;
+    font-size: 0.875rem;
+  }
+
+  .duration {
+    color: #606060;
+  }
+
+  .play-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+
+  .recording-card:hover .play-icon {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .play-icon svg {
+    width: 18px;
+    height: 18px;
+    margin-left: 2px;
+    color: #d0d0d0;
   }
 
   @media (max-width: 768px) {

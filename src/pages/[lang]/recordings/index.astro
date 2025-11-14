@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
+import RecordingsPlaylist from '../../../components/RecordingsPlaylist';
 import { translations, type Language } from '../../../i18n';
 
 export async function getStaticPaths() {
@@ -24,13 +25,6 @@ export async function getStaticPaths() {
 
 const { recordings, lang } = Astro.props;
 const t = translations[lang];
-
-// Format duration from seconds to mm:ss
-const formatDuration = (seconds: number) => {
-	const mins = Math.floor(seconds / 60);
-	const secs = seconds % 60;
-	return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
 ---
 
 <BaseLayout lang={lang} title={t.recordings.archive}>
@@ -44,34 +38,11 @@ const formatDuration = (seconds: number) => {
 				<p>{lang === 'en' ? 'No recordings available yet' : 'Aucun enregistrement disponible'}</p>
 			</div>
 		) : (
-		<div class="recordings-grid">
-			{recordings.map(recording => (
-				<a href={`/womb/${lang}/recordings/${recording.id.replace('.md', '')}`} class="recording-card">
-					<div class="recording-card-visual">
-						<div class="waveform-placeholder">
-							<div class="play-button">
-								<svg viewBox="0 0 24 24" fill="currentColor">
-									<path d="M8 5v14l11-7z"/>
-								</svg>
-							</div>
-						</div>
-					</div>
-					<div class="recording-card-content">
-						<h2>{recording.data.title}</h2>
-						<p class="recording-artist">{recording.data.artist}</p>
-						<p class="recording-meta">
-							{new Date(recording.data.date).toLocaleDateString(lang, {
-								year: 'numeric',
-								month: 'long',
-								day: 'numeric'
-							})}
-							<span class="separator">•</span>
-							{formatDuration(recording.data.duration)}
-						</p>
-					</div>
-				</a>
-			))}
-		</div>
+		<RecordingsPlaylist
+			recordings={recordings}
+			lang={lang}
+			client:load
+		/>
 		)}
 	</main>
 </BaseLayout>
@@ -91,105 +62,6 @@ const formatDuration = (seconds: number) => {
 		text-transform: lowercase;
 	}
 
-	.recordings-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-		gap: 2rem;
-	}
-
-	.recording-card {
-		background: rgba(255, 255, 255, 0.03);
-		border-radius: 8px;
-		overflow: hidden;
-		transition: transform 0.3s, background 0.3s;
-		display: block;
-	}
-
-	.recording-card:hover {
-		transform: translateY(-4px);
-		background: rgba(255, 255, 255, 0.06);
-	}
-
-	.recording-card:hover .play-button {
-		opacity: 1;
-		transform: scale(1.1);
-	}
-
-	.recording-card-visual {
-		position: relative;
-		width: 100%;
-		aspect-ratio: 16/9;
-		background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4));
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.waveform-placeholder {
-		width: 100%;
-		height: 100%;
-		position: relative;
-		background-image: repeating-linear-gradient(
-			90deg,
-			rgba(255, 255, 255, 0.1) 0,
-			rgba(255, 255, 255, 0.1) 2px,
-			transparent 2px,
-			transparent 4px
-		);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.play-button {
-		width: 60px;
-		height: 60px;
-		background: rgba(255, 255, 255, 0.1);
-		backdrop-filter: blur(10px);
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		opacity: 0.7;
-		transition: opacity 0.3s, transform 0.3s;
-	}
-
-	.play-button svg {
-		width: 24px;
-		height: 24px;
-		margin-left: 3px;
-		color: rgba(255, 255, 255, 0.9);
-	}
-
-	.recording-card-content {
-		padding: 1.5rem;
-	}
-
-	.recording-card h2 {
-		font-size: 1.3rem;
-		font-weight: 300;
-		margin: 0 0 0.5rem 0;
-		letter-spacing: 0.05em;
-		line-height: 1.3;
-	}
-
-	.recording-artist {
-		font-size: 1rem;
-		color: rgba(255, 255, 255, 0.7);
-		margin: 0 0 0.75rem 0;
-		letter-spacing: 0.1em;
-		text-transform: lowercase;
-	}
-
-	.recording-meta {
-		color: rgba(255, 255, 255, 0.5);
-		font-size: 0.9rem;
-		letter-spacing: 0.05em;
-	}
-
-	.separator {
-		margin: 0 0.5rem;
-	}
 
 	.no-recordings {
 		text-align: center;
@@ -206,10 +78,6 @@ const formatDuration = (seconds: number) => {
 
 		h1 {
 			font-size: 2rem;
-		}
-
-		.recordings-grid {
-			grid-template-columns: 1fr;
 		}
 	}
 </style>

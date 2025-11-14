@@ -1,6 +1,7 @@
 ---
 name: Rafael Aragon
 type: resident
+photo: "/womb/artist-photo-1.jpg"
 ---
 
 ## Bio (EN)

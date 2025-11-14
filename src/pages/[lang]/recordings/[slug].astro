@@ -1,0 +1,263 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import AudioPlayer from '../../../components/AudioPlayer';
+import { translations, type Language } from '../../../i18n';
+
+export async function getStaticPaths() {
+	const recordings = await getCollection('recordings');
+	const languages: Language[] = ['en', 'fr'];
+
+	return recordings.flatMap(recording =>
+		languages.map(lang => ({
+			params: {
+				lang,
+				slug: recording.id.replace('.md', '')
+			},
+			props: { recording, lang }
+		}))
+	);
+}
+
+const { recording, lang } = Astro.props;
+const { Content } = await recording.render();
+const t = translations[lang];
+
+// Format duration from seconds to mm:ss
+const formatDuration = (seconds: number) => {
+	const mins = Math.floor(seconds / 60);
+	const secs = seconds % 60;
+	return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+// Get related event if exists
+let relatedEvent = null;
+if (recording.data.event) {
+	try {
+		relatedEvent = await getEntry('events', recording.data.event);
+	} catch (e) {
+		// Event not found
+	}
+}
+
+// Get artist if exists
+let artist = null;
+if (recording.data.artist) {
+	try {
+		const artists = await getCollection('artists');
+		artist = artists.find(a =>
+			a.data.name.toLowerCase() === recording.data.artist.toLowerCase()
+		);
+	} catch (e) {
+		// Artist not found
+	}
+}
+---
+
+<BaseLayout lang={lang} title={`${recording.data.title} - ${recording.data.artist}`}>
+	<Header lang={lang} />
+
+	<main class="recording-detail">
+		<div class="recording-header">
+			<div class="recording-info">
+				<h1>{recording.data.title}</h1>
+				<p class="artist-name">{recording.data.artist}</p>
+
+				<div class="recording-meta">
+					<span class="meta-item">
+						<span class="meta-label">{t.recordings.date}:</span>
+						{new Date(recording.data.date).toLocaleDateString(lang, {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric'
+						})}
+					</span>
+					<span class="meta-item">
+						<span class="meta-label">{t.recordings.duration}:</span>
+						{formatDuration(recording.data.duration)}
+					</span>
+					{relatedEvent && (
+						<span class="meta-item">
+							<span class="meta-label">{t.recordings.event}:</span>
+							<a href={`/womb/${lang}/events/${relatedEvent.id.replace('.md', '')}`}>
+								{relatedEvent.data.title[lang]}
+							</a>
+						</span>
+					)}
+				</div>
+			</div>
+		</div>
+
+		<div class="player-container">
+			<AudioPlayer
+				audioUrl={recording.data.audioFile}
+				title={`${recording.data.artist} - ${recording.data.title}`}
+				client:load
+			/>
+
+			<div class="player-actions">
+				{artist && (
+					<a
+						href={`/womb/${lang}/artists/${artist.id.replace('.md', '')}`}
+						class="action-button artist-link"
+					>
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="8" r="5"/>
+							<path d="M3 21h18c0-4.42-3.58-8-8-8s-8 3.58-8 8"/>
+						</svg>
+						{lang === 'en' ? 'View Artist' : 'Voir l\'artiste'}
+					</a>
+				)}
+			</div>
+		</div>
+
+		{Content && (
+			<div class="recording-content">
+				<Content />
+			</div>
+		)}
+	</main>
+</BaseLayout>
+
+<style>
+	.recording-detail {
+		max-width: 900px;
+		margin: 0 auto;
+		padding: 3rem 2rem;
+	}
+
+	.recording-header {
+		margin-bottom: 3rem;
+		text-align: center;
+	}
+
+	.recording-info h1 {
+		font-size: 2.5rem;
+		font-weight: 200;
+		letter-spacing: 0.1em;
+		margin: 0 0 1rem 0;
+		line-height: 1.2;
+	}
+
+	.artist-name {
+		font-size: 1.5rem;
+		color: rgba(255, 255, 255, 0.7);
+		letter-spacing: 0.2em;
+		text-transform: lowercase;
+		margin: 0 0 2rem 0;
+	}
+
+	.recording-meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 2rem;
+		font-size: 0.95rem;
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.meta-item {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.meta-label {
+		text-transform: lowercase;
+		letter-spacing: 0.1em;
+		color: rgba(255, 255, 255, 0.4);
+	}
+
+	.meta-item a {
+		color: rgba(255, 255, 255, 0.8);
+		text-decoration: none;
+		transition: color 0.3s;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	.meta-item a:hover {
+		color: white;
+		border-bottom-color: rgba(255, 255, 255, 0.5);
+	}
+
+	.player-container {
+		margin-bottom: 3rem;
+	}
+
+	.player-actions {
+		margin-top: 1.5rem;
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+	}
+
+	.action-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.75rem 1.5rem;
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		color: rgba(255, 255, 255, 0.8);
+		text-decoration: none;
+		font-size: 0.95rem;
+		letter-spacing: 0.05em;
+		transition: all 0.3s;
+	}
+
+	.action-button:hover {
+		background: rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 255, 255, 0.2);
+		color: white;
+		transform: translateY(-2px);
+	}
+
+	.action-button svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.recording-content {
+		margin-top: 3rem;
+		padding-top: 3rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		color: rgba(255, 255, 255, 0.7);
+		line-height: 1.8;
+		letter-spacing: 0.02em;
+	}
+
+	.recording-content :global(h2) {
+		font-size: 1.5rem;
+		font-weight: 300;
+		letter-spacing: 0.1em;
+		margin: 2rem 0 1rem 0;
+		color: rgba(255, 255, 255, 0.9);
+	}
+
+	.recording-content :global(p) {
+		margin-bottom: 1.5rem;
+	}
+
+	@media (max-width: 768px) {
+		.recording-detail {
+			padding: 2rem 1rem;
+		}
+
+		.recording-info h1 {
+			font-size: 2rem;
+		}
+
+		.artist-name {
+			font-size: 1.2rem;
+		}
+
+		.recording-meta {
+			flex-direction: column;
+			gap: 0.75rem;
+			align-items: center;
+		}
+
+	}
+</style>

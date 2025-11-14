@@ -1,7 +1,7 @@
 ---
 name: "Dragan Markovic"
 type: "resident"
-photo: "/womb/WOMB/Artists/dragan.jpg"
+photo: "/womb/artist-photo-1.jpg"
 instagram: "https://instagram.com/dragan_markovic"
 soundcloud: "https://soundcloud.com/dragan-markovic"
 

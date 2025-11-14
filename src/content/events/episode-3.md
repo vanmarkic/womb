@@ -3,10 +3,13 @@ number: 3
 title:
   en: Episode Three
   fr: Épisode Trois
+description:
+  en: "Episode Three continues the WOMB journey with expanded sonic palettes and deeper immersive experiences. A series of intimate events dedicated to Ambient & freeform music, curated by Thangi & Rafael Aragon."
+  fr: "L'Épisode Trois poursuit le voyage WOMB avec des palettes sonores élargies et des expériences immersives plus profondes. Une série d'événements intimes dédiés à la musique Ambient & freeform, organisés par Thangi & Rafael Aragon."
 dateFrom: 2024-02-16
 dateTo: 2024-02-17
 location: Brussels
-# coverImage: /womb/WOMB/Events/Episode Trois/WombEpisode3_FB.png
+coverImage: /womb/episode-3-cover.jpg
 artists:
   - rafael-aragon
   - thangi
@@ -19,22 +22,17 @@ artists:
 audioTracks:
   - title: DJ Set - Episode Trois
     artist: Rafael Aragon
-    audioFile: /womb/WOMB/MUSIC/Episode Trois/Raf.wav
+    audioFile: /womb/recordings/episode-3-rafael-aragon.wav
   - title: DJ Set - Episode Trois
     artist: Sebcat
-    audioFile: /womb/WOMB/MUSIC/Episode Trois/seb.wav
+    audioFile: /womb/recordings/episode-3-sebcat.wav
   - title: Live Performance - Episode Trois
     artist: Shin
-    audioFile: /womb/WOMB/MUSIC/Episode Trois/shin.wav
+    audioFile: /womb/recordings/episode-3-shin.wav
   - title: Live Set - Episode Trois
     artist: Xav
-    audioFile: /womb/WOMB/MUSIC/Episode Trois/xav.wav
+    audioFile: /womb/recordings/episode-3-xav.wav
+socialMedia:
+  instagram: "@womb_ambient"
+  soundcloud: "Rafael_Aragon"
 ---
-
-## About Episode Three
-
-Episode Three continues the womb journey with expanded sonic palettes and deeper immersive experiences.
-
-## À propos de l'Épisode Trois
-
-L'Épisode Trois poursuit le voyage womb avec des palettes sonores élargies et des expériences immersives plus profondes.

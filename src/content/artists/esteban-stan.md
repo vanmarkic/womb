@@ -1,6 +1,7 @@
 ---
 name: Esteban Stan
 type: guest
+photo: "/womb/episode-3-atmosphere-4.jpg"
 ---
 
 ## Bio (EN)

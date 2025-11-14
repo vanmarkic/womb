@@ -1,6 +1,7 @@
 ---
 name: Sancho Meiso Chaya
 type: guest
+photo: "/womb/episode-3-atmosphere-3.jpg"
 ---
 
 ## Bio (EN)
