@@ -5,7 +5,7 @@ title:
   fr: Épisode Un
 description:
   en: "Building upon the foundation of Episode Zero, this second iteration of WOMB delves deeper into the sonic exploration of ambient territories. Episode Un, Chapitre Deux - continuing the series of intimate events dedicated to Ambient & freeform music."
-  fr: "En s'appuyant sur les fondations de l'Épisode Zéro, cette deuxième itération de WOMB plonge plus profondément dans l'exploration sonore des territoires ambiants. Épisode Un, Chapitre Deux - continuant la série d'événements intimes dédiés à la musique Ambient & freeform."
+  fr: "En s'appuyant sur les fondations de l'Épisode Zéro, cette deuxième itération de WOMB plonge plus profondément dans l'exploration sonore des territoires ambiants. Épisode Un, Chapitre Deux - continuant la série d'événements intimes dédiés à la musique Ambient & freeform"
 dateFrom: 2023-11-19
 dateTo: 2023-11-19
 location: Brussels
