@@ -33,12 +33,15 @@ artists:
   - shin
   - xav
 audioTracks:
-  - title: DJ Set - Episode Trois
+  - title: "Ep3_A1"
+    artist: Sancho Meiso Chaya (LIVE)
+    soundcloudUrl: /wombambient/ep3_a1-sancho-meiso-chaya-live
+  - title: "Ep3_A2"
     artist: Rafael Aragon
-    audioFile: /womb/recordings/episode-3-rafael-aragon.mp3
-  - title: DJ Set - Episode Trois
-    artist: Sebcat
-    audioFile: /womb/recordings/episode-3-sebcat.mp3
+    soundcloudUrl: /wombambient/ep3_a2-rafael-aragon
+  - title: "Ep3_A3"
+    artist: Tanghi & Rafael Aragon
+    soundcloudUrl: /wombambient/ep3_a3-tanghi-rafael-aragon-closing-jam
   - title: Live Performance - Episode Trois
     artist: Shin
     audioFile: /womb/recordings/episode-3-shin.mp3

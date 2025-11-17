@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import AudioPlayer from '../../../components/AudioPlayer';
+import SoundCloudPlayer from '../../../components/SoundCloudPlayer';
 import { Gallery } from '../../../components/Gallery';
 import { translations, type Language } from '../../../i18n';
 
@@ -133,11 +134,19 @@ const sortedArtists = [...residents, ...guests];
 				<h2>{t.events.recordings || 'Recordings'}</h2>
 				<div class="audio-tracks">
 					{event.data.audioTracks.map(track => (
-						<AudioPlayer
-							client:load
-							audioUrl={track.audioFile}
-							title={`${track.artist} - ${track.title}`}
-						/>
+						track.soundcloudUrl ? (
+							<SoundCloudPlayer
+								client:load
+								soundcloudUrl={track.soundcloudUrl}
+								title={`${track.artist} - ${track.title}`}
+							/>
+						) : track.audioFile ? (
+							<AudioPlayer
+								client:load
+								audioUrl={track.audioFile}
+								title={`${track.artist} - ${track.title}`}
+							/>
+						) : null
 					))}
 				</div>
 			</section>

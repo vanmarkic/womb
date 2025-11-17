@@ -18,12 +18,30 @@ artists:
   - rotor
   - keyframe
 audioTracks:
-  - title: DJ Set - Episode Quatre
+  - title: "Ep4_A1"
+    artist: Rafael Aragon
+    soundcloudUrl: /abyssaipodcast/rafaelaragon
+  - title: "Ep4_A2"
+    artist: Dragan Markovic (LIVE)
+    soundcloudUrl: /wombambient/ep4_a2-dragan-markovic-live
+  - title: "Ep4_A3"
     artist: Emsy Bibis
-    audioFile: /womb/recordings/episode-4-emsy-bibis.mp3
-  - title: Live Performance - Episode Quatre
-    artist: Rotor
-    audioFile: /womb/recordings/episode-4-rotor-live.mp3
+    soundcloudUrl: /wombambient/ep4-a3-emsy-bibis
+  - title: "Ep4_A4"
+    artist: Sebcat
+    soundcloudUrl: /wombambient/ep4_a4-sebcat-rebel-up
+  - title: "Ep4_B1"
+    artist: Dragan Markovic
+    soundcloudUrl: /wombambient/ep4_b1-dragan-markovic
+  - title: "Ep4_B2"
+    artist: Rafael Aragon (LIVE)
+    soundcloudUrl: /wombambient/ep4-b2-rafael-aragon-live
+  - title: "Ep4_B3"
+    artist: Rotor (LIVE)
+    soundcloudUrl: /wombambient/ep4-b3-rotor-live
+  - title: "Ep4_B4"
+    artist: Rafael Aragon (Live Cinemix)
+    soundcloudUrl: /wombambient/ep4_b4-rafael-aragon-live-cinemix
 socialMedia:
   instagram: "@womb_ambient"
   facebook: "WOMB - Ambient Music Events"

@@ -15,9 +15,21 @@ artists:
   - rafael-aragon
   - thangi
 audioTracks:
-  - title: "WOMB Ep.1 (Deuxième Mouvement)"
+  - title: "Ep1_A1"
+    artist: Tanghi
+    soundcloudUrl: /wombambient/ep1a1-tanghi-prelude-1
+  - title: "Ep1_A2"
+    artist: Al Jive Mestizo
+    soundcloudUrl: /wombambient/ep1_a2-al-jive-mestizo-explorations
+  - title: "Ep1_B1"
+    artist: Dragan
+    soundcloudUrl: /wombambient/ep1b1_dragan
+  - title: "Ep1_B2"
+    artist: Rafael Aragon
+    soundcloudUrl: /wombambient/ep1b2-rafael-aragon-premier
+  - title: "Ep1_B3"
     artist: Dragan Markovic
-    soundcloudUrl: "https://soundcloud.com/rafiralfiro/03-dragan-markovic-womb-ep-1"
+    soundcloudUrl: /wombambient/ep1b3-dragan
 socialMedia:
   instagram: "@womb_ambient"
   soundcloud: "Rafael_Aragon"

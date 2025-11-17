@@ -21,9 +21,21 @@ artists:
   - rotor
   - sebcat
 audioTracks:
-  - title: Live Set - Episode Deux
-    artist: Dragan Markovic
-    audioFile: /womb/recordings/episode-2-dragan-markovic-live.mp3
+  - title: "Ep2_A1"
+    artist: Rafael Aragon
+    soundcloudUrl: /wombambient/ep2_a1-rafael-aragon
+  - title: "Ep2_A2"
+    artist: Xique Xique
+    soundcloudUrl: /wombambient/ep2_a2-xique-xique
+  - title: "Ep2_B1"
+    artist: Tanghi
+    soundcloudUrl: /wombambient/ep2_b1-tanghi
+  - title: "Ep2_B2"
+    artist: Dragan Markovic (LIVE)
+    soundcloudUrl: /wombambient/ep2_b2-dragan-markovic-live
+  - title: "Ep2_B3"
+    artist: Rafael Aragon
+    soundcloudUrl: /wombambient/ep2_b3-rafael-aragon-derniere-desserte
 media:
   - type: photo
     file: "/womb/episode-2-atmosphere-1.jpg"

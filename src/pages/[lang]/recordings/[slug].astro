@@ -3,6 +3,7 @@ import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import AudioPlayer from '../../../components/AudioPlayer';
+import SoundCloudPlayer from '../../../components/SoundCloudPlayer';
 import { translations, type Language } from '../../../i18n';
 
 export async function getStaticPaths() {
@@ -90,11 +91,19 @@ if (recording.data.artist) {
 		</div>
 
 		<div class="player-container">
-			<AudioPlayer
-				audioUrl={recording.data.audioFile}
-				title={`${recording.data.artist} - ${recording.data.title}`}
-				client:load
-			/>
+			{recording.data.soundcloudUrl ? (
+				<SoundCloudPlayer
+					soundcloudUrl={recording.data.soundcloudUrl}
+					title={`${recording.data.artist} - ${recording.data.title}`}
+					client:load
+				/>
+			) : recording.data.audioFile ? (
+				<AudioPlayer
+					audioUrl={recording.data.audioFile}
+					title={`${recording.data.artist} - ${recording.data.title}`}
+					client:load
+				/>
+			) : null}
 
 			<div class="player-actions">
 				{artist && (
