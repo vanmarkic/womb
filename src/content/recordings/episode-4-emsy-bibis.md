@@ -2,7 +2,7 @@
 title: "DJ Set - Episode Quatre"
 artist: "Emsy Bibis"
 event: "episode-4"
-audioFile: "/womb/recordings/episode-4-emsy-bibis.mp3"
+soundcloudUrl: "/wombambient/ep4-a3-emsy-bibis"
 duration: 5400
 date: 2024-11-22
 photo: "/womb/episode-4-atmosphere-1.jpg"

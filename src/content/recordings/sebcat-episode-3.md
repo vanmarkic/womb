@@ -3,7 +3,7 @@ title: "Episode 3 - Nocturnal Frequencies"
 artist: "Sebcat"
 event: "episode-3"
 duration: 4800
-audioFile: "/womb/recordings/episode-3-sebcat.mp3"
+soundcloudUrl: "/wombambient/ep4_a4-sebcat-rebel-up"
 date: 2024-02-20
 photo: "/womb/episode-3-atmosphere-4.jpg"
 ---

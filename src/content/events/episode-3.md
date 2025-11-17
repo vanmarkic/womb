@@ -35,7 +35,7 @@ artists:
 audioTracks:
   - title: DJ Set - Episode Trois
     artist: Rafael Aragon
-    audioFile: /womb/recordings/episode-3-rafael-aragon.mp3
+    soundcloudUrl: /wombambient/ep3_a2-rafael-aragon
   - title: DJ Set - Episode Trois
     artist: Sebcat
     audioFile: /womb/recordings/episode-3-sebcat.mp3

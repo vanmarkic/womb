@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'preact/hooks';
 import AudioPlayer from './AudioPlayer';
+import SoundCloudPlayer from './SoundCloudPlayer';
 
 interface Recording {
 	id: string;
 	data: {
 		title: string;
 		artist: string;
-		audioFile: string;
+		audioFile?: string;
+		soundcloudUrl?: string;
 		date: Date;
 		duration: number;
 	};
@@ -63,13 +65,20 @@ export default function RecordingsPlaylist({ recordings, lang }: Props) {
 		<div className="recordings-list">
 			{recordings.map((recording, index) => (
 				<div key={recording.id} className={`recording-item ${currentIndex === index ? 'now-playing' : ''}`}>
-					<AudioPlayer
-						audioUrl={recording.data.audioFile}
-						title={`${recording.data.artist} - ${recording.data.title}`}
-						onEnded={() => handleRecordingEnd(index)}
-						autoPlay={isPlaylistMode && currentIndex === index}
-						playlistIndex={index}
-					/>
+					{recording.data.soundcloudUrl ? (
+						<SoundCloudPlayer
+							soundcloudUrl={recording.data.soundcloudUrl}
+							title={`${recording.data.artist} - ${recording.data.title}`}
+						/>
+					) : recording.data.audioFile ? (
+						<AudioPlayer
+							audioUrl={recording.data.audioFile}
+							title={`${recording.data.artist} - ${recording.data.title}`}
+							onEnded={() => handleRecordingEnd(index)}
+							autoPlay={isPlaylistMode && currentIndex === index}
+							playlistIndex={index}
+						/>
+					) : null}
 					<div className="recording-details">
 						<p className="recording-meta">
 							{new Date(recording.data.date).toLocaleDateString(lang, {

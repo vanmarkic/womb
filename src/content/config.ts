@@ -48,7 +48,8 @@ const recordings = defineCollection({
 		artist: z.string(),
 		event: z.string(),
 		duration: z.number(),
-		audioFile: z.string(),
+		audioFile: z.string().optional(),
+		soundcloudUrl: z.string().optional(),
 		date: z.coerce.date(),
 	}),
 });
