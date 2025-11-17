@@ -14,12 +14,18 @@ artists:
   - thangi
   - rafael-aragon
 audioTracks:
-  - title: "WOMB Ep.0 (Prologue)"
-    artist: Thangi
-    soundcloudUrl: "https://soundcloud.com/rafiralfiro/01-thangi-ouverture"
-  - title: "WOMB Ep.0 (Premier Livre)"
+  - title: "Ep0_A2"
     artist: Rafael Aragon
-    soundcloudUrl: "https://soundcloud.com/rafiralfiro/02-rafael-aragon-premier"
+    soundcloudUrl: /wombambient/ep0_a2-rafael-aragon
+  - title: "Ep0_A3"
+    artist: Dragan Markovic
+    soundcloudUrl: /wombambient/ep0_a3-dragan-markovic
+  - title: "Ep0_B1"
+    artist: Rafael Aragon
+    soundcloudUrl: /wombambient/ep0_b1-rafael-aragon
+  - title: "Ep0_B2"
+    artist: Tanghi
+    soundcloudUrl: /wombambient/ep0_b2-tanghi-deuxieme-passage
 socialMedia:
   instagram: "@womb_ambient"
   soundcloud: "Rafael_Aragon"
