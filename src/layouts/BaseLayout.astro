@@ -1,5 +1,6 @@
 ---
 import type { Language } from '../i18n';
+import VerticalSliders from '../components/VerticalSliders.tsx';
 
 interface Props {
 	lang: Language;
@@ -42,6 +43,9 @@ const { lang, title } = Astro.props;
 			<line x1="17" y1="9" x2="23" y2="15"></line>
 		</svg>
 	</button>
+
+	<!-- Vertical sliders for settings -->
+	<VerticalSliders client:load onSettingsChange={undefined} />
 
 	<!-- Main content -->
 	<div class="main-content">
@@ -366,10 +370,27 @@ const { lang, title } = Astro.props;
 
 <script>
 	import { AmbientSoundEngine } from '../scripts/ambient-sound';
+	import { applyVisualSettings } from '../scripts/visual-modifier';
+	import { loadSettings } from '../scripts/settings';
 
 	// Initialize ambient sound engine
 	const soundEngine = new AmbientSoundEngine();
 	soundEngine.init();
+
+	// Store soundEngine in globalThis for access from components
+	(globalThis as any).soundEngine = soundEngine;
+
+	// Load and apply initial settings
+	const initialSettings = loadSettings();
+	soundEngine.setAudioFrequencyMultiplier(initialSettings.audioFrequency);
+	applyVisualSettings(initialSettings.visualIntensity);
+
+	// Handle settings changes from VerticalSliders
+	window.addEventListener('settings-changed', (event: CustomEvent) => {
+		const { audioFrequency, visualIntensity } = event.detail;
+		soundEngine.setAudioFrequencyMultiplier(audioFrequency);
+		applyVisualSettings(visualIntensity);
+	});
 
 	// Sound state management
 	const soundToggle = document.getElementById('sound-toggle');
