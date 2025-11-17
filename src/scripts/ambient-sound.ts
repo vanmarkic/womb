@@ -7,6 +7,7 @@ export class AmbientSoundEngine {
 	private reverb: ConvolverNode | null = null;
 	private masterGain: GainNode | null = null;
 	private isMuted = false;
+	private audioFrequencyMultiplier = 1; // Default multiplier (corresponds to slider value 0.5)
 
 	init() {
 		if (this.isInitialized) return;
@@ -44,6 +45,12 @@ export class AmbientSoundEngine {
 				this.audioContext!.currentTime + 0.3
 			);
 		}
+	}
+
+	// Set audio frequency multiplier from slider value (0-1)
+	setAudioFrequencyMultiplier(sliderValue: number) {
+		// Convert slider value 0-1 to multiplier 1.5-0.3 (0=slowest, 1=fastest)
+		this.audioFrequencyMultiplier = 1.5 - (sliderValue * 1.2);
 	}
 
 	// Create cathedral reverb impulse response
@@ -511,7 +518,7 @@ export class AmbientSoundEngine {
 
 				// Schedule next sound with random variation (±40% of base duration)
 				const variation = (Math.random() - 0.5) * 0.8;
-				const nextDelay = timing.baseDuration * (1 + variation);
+				const nextDelay = timing.baseDuration * (1 + variation) * this.audioFrequencyMultiplier;
 
 				const timer = setTimeout(scheduleNextSound, nextDelay);
 				this.soundTimers.push(timer);
@@ -528,8 +535,8 @@ export class AmbientSoundEngine {
 			const glitchFunc = glitchFunctions[Math.floor(Math.random() * glitchFunctions.length)];
 			glitchFunc();
 
-			// Next glitch in 45-120 seconds
-			const nextGlitchDelay = 45000 + Math.random() * 75000;
+			// Next glitch in 45-120 seconds (multiplied by frequency multiplier)
+			const nextGlitchDelay = (45000 + Math.random() * 75000) * this.audioFrequencyMultiplier;
 			const timer = setTimeout(scheduleGlitches, nextGlitchDelay);
 			this.soundTimers.push(timer);
 		};
